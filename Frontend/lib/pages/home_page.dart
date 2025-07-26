@@ -114,7 +114,9 @@ class _HomePageContentState extends State<HomePageContent> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Merhaba $firstName"),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blue[600],
+        titleTextStyle: const TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.bold),
+        leading: const Icon(Icons.waving_hand,color: Colors.white,size: 25),
       ),
       body:Center(
         child: Text("HomePage"),
