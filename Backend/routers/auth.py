@@ -105,7 +105,7 @@ class UpdateUserRequest(BaseModel):
     firstName: Optional[str] = None
     lastName: Optional[str] = None
     email: Optional[str] = None
-    password: Optional[str] = None
+
 
 
 @router.put("/update")
@@ -139,8 +139,7 @@ def update_user(
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
             update.username = updateUser.username
 
-    if updateUser.password is not None:
-        update.hashed_password = bcrypt_context.hash(updateUser.password)
+
 
     try:
         db.commit()
