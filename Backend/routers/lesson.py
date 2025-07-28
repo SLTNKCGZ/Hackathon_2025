@@ -11,6 +11,14 @@ router = APIRouter(
 )
 user_dependency=Annotated[dict,Depends(get_current_user)]
 
+
+class LessonResponse(BaseModel):
+    id:int
+    lesson_title:str
+    user_id:int
+
+
+
 @router.get("/QuestionLessons")
 def get_lessons(user:user_dependency,db:db_dependency):
     if user is None:
@@ -20,7 +28,14 @@ def get_lessons(user:user_dependency,db:db_dependency):
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
 
-    return [q_lesson.lesson_title for q_lesson in db_user.q_lessons]
+    lessons=db.query(QuestionLesson).filter(QuestionLesson.user_id == db_user.id).order_by(QuestionLesson.id).all()
+    return [
+        LessonResponse(
+            id=l.id,
+            user_id=db_user.id,
+            lesson_title=l.lesson_title
+        ) for l in lessons
+    ]
 
 
 @router.get("/NoteLessons")
@@ -47,6 +62,8 @@ def create_lesson(lesson:LessonRequest,user:user_dependency,db:db_dependency):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
 
     question_lesson=QuestionLesson(lesson_title=lesson.lesson_title,user_id=db_user.id)
+    if question_lesson:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="QLesson already exists")
     db.add(question_lesson)
     db.commit()
     db.refresh(question_lesson)
@@ -61,6 +78,10 @@ def create_lesson(lesson:LessonRequest,user:user_dependency,db:db_dependency):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
 
     note_lesson=NoteLesson(lesson_title=lesson.lesson_title,user_id=db_user.id)
+
+    if note_lesson:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="NoteLesson already exists")
+
     db.add(note_lesson)
     db.commit()
     db.refresh(note_lesson)
@@ -129,7 +150,7 @@ def delete(db:db_dependency,user:user_dependency,q_id:int):
 @router.delete("/NoteLesson/delete/{n_id}")
 def delete(db: db_dependency, user: user_dependency, n_id: int):
     if user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not authenticated")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
     db_user = db.query(User).filter(User.id == user.get("id")).first()
     if db_user is None:
