@@ -1,58 +1,111 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class QuestionsPage extends StatefulWidget {
-  const QuestionsPage({super.key});
+  final String token;
+  const QuestionsPage({super.key, required this.token});
 
   @override
   State<QuestionsPage> createState() => _QuestionsPageState();
 }
 
 class _QuestionsPageState extends State<QuestionsPage> {
+  List<String> lessons = [];
+  final TextEditingController _controller = TextEditingController();
+
+  Future<void> fetchLessons() async {
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/lesson/QuestionLessons'),
+      headers: {'Authorization': 'Bearer ${widget.token}'},
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        lessons = List<String>.from(
+            json.decode(response.body).map((e) => e['lesson_title']));
+      });
+    } else {
+      print("Hata: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> addLesson(String title) async {
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/lesson/QuestionLesson/create'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}',
+      },
+      body: jsonEncode({'lesson_title': title}),
+    );
+    if (response.statusCode == 200) {
+      fetchLessons();
+    } else {
+      print("Hata: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLessons();
+  }
+
+  void showAddLessonDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Ders Ekle"),
+        content: TextField(
+          controller: _controller,
+          decoration: InputDecoration(hintText: "Ders adı"),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("İptal")),
+          TextButton(
+              onPressed: () {
+                addLesson(_controller.text);
+                _controller.clear();
+                Navigator.pop(context);
+              },
+              child: Text("Ekle"))
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Sorular'),
-          backgroundColor: Colors.blue[600],
-          titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
-          leading: const Icon(Icons.quiz, color: Colors.white, size: 25),
-          bottom: const TabBar(
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: [
-              Tab(text: 'Matematik'),
-              Tab(text: 'Türkçe'),
-              Tab(text: 'İngilizce'),
-            ],
+    return Scaffold(
+      appBar: AppBar(title: Text("Sorular")),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: lessons.length,
+        gridDelegate:
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        itemBuilder: (context, index) => GestureDetector(
+          onTap: () {
+            // Daha sonra soru ekleme sayfası burada açılır
+          },
+          child: Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Center(
+              child: Text(
+                lessons[index],
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
           ),
         ),
-        backgroundColor: const Color(0xFFF5F6FA),
-        body: TabBarView(
-          children: [
-            // Hastalıklar
-            SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                  child: Text("Matematik"),
-                )
-            ),
-            SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                  child: Text("Türkçe"),
-                )
-            ),
-            SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                  child: Text("İngilizce"),
-                )
-            ),
-          ],
-        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: showAddLessonDialog,
+        child: Icon(Icons.add),
       ),
     );
   }
