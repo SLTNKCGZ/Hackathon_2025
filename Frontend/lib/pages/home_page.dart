@@ -7,7 +7,7 @@ import 'package:hackathon_2025/pages/subjects_page.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key,required this.token});
+  const HomePage({super.key, required this.token});
   final String token;
 
   @override
@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex=0;
+  int _selectedIndex = 0;
   late List<Widget> _pages = [];
 
   @override
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     _pages = [
       HomePageContent(token: widget.token),
       SubjectsPage(),
-      QuestionsPage(),
+      QuestionsPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];
   }
@@ -37,11 +37,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _pages=[
+    _pages = [
       HomePageContent(token: widget.token),
       SubjectsPage(),
-      QuestionsPage(),
-      ProfilePage(token: widget.token)];
+      QuestionsPage(token: widget.token),
+      ProfilePage(token: widget.token)
+    ];
 
     return Scaffold(
       body: _pages[_selectedIndex],
@@ -75,9 +76,8 @@ class _HomePageState extends State<HomePage> {
 }
 
 class HomePageContent extends StatefulWidget {
-  const HomePageContent({super.key,required this.token});
+  const HomePageContent({super.key, required this.token});
   final String token;
-
 
   @override
   State<HomePageContent> createState() => _HomePageContentState();
@@ -93,21 +93,18 @@ class _HomePageContentState extends State<HomePageContent> {
   }
 
   Future<void> fetch_name() async {
-    final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/auth/me'),
+    final response = await http.get(Uri.parse('http://10.0.2.2:8000/auth/me'),
         headers: {
           'Authorization': 'Bearer ${widget.token}',
           'Content-type': 'application/json'
-        }
-    );
-    if(response.statusCode==200){
-      final data=jsonDecode(response.body);
+        });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
       setState(() {
-        firstName=data["firstName"];
+        firstName = data["firstName"];
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -115,15 +112,13 @@ class _HomePageContentState extends State<HomePageContent> {
       appBar: AppBar(
         title: Text("Merhaba $firstName"),
         backgroundColor: Colors.blue[600],
-        titleTextStyle: const TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.bold),
-        leading: const Icon(Icons.waving_hand,color: Colors.white,size: 25),
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+        leading: const Icon(Icons.waving_hand, color: Colors.white, size: 25),
       ),
-      body:Center(
+      body: Center(
         child: Text("HomePage"),
       ),
-
     );
   }
 }
-
-

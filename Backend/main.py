@@ -31,3 +31,9 @@ app.include_router(question.router)
 app.include_router(term.router)
 app.include_router(note.router)
 Base.metadata.create_all(bind=engine)
+
+if __name__ == "__main__":
+    import uvicorn
+    Base.metadata.create_all(bind=engine)
+    uvicorn.run("main:app", reload=True)
+
