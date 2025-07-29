@@ -322,4 +322,5 @@ def get_note_term_by_id(term_id: int, user: user_dependency, db: db_dependency):
         id=term.id,
         term_title=term.term_title,
         lesson_id=term.n_lesson_id
-    ) 
+    )
+
