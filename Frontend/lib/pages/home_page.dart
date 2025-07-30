@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     _pages = [
       HomePageContent(token: widget.token),
-      SubjectsPage(),
+      SubjectsPage(token: widget.token),
       QuestionsPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _pages = [
       HomePageContent(token: widget.token),
-      SubjectsPage(),
+      SubjectsPage(token: widget.token),
       QuestionsPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];

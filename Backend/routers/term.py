@@ -134,12 +134,18 @@ def create_note_term(
     if not lesson:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lesson bulunamadı")
 
+    existing_term = db.query(NoteTerm).filter(
+        NoteTerm.term_title == term.term_title,
+        NoteTerm.n_lesson_id == lesson_id
+    ).first()
+
+    if existing_term:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="NoteTerm is already exist")
+        
     note_term = NoteTerm(
         term_title=term.term_title,
         n_lesson_id=lesson.id
     )
-    if note_term:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="NoteTerm is already exist")
     db.add(note_term)
     db.commit()
     db.refresh(note_term)
