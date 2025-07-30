@@ -71,7 +71,7 @@ class TermResponse(BaseModel):
 @router.post("/QuestionTerm/create/{lesson_id}")
 def create_question_term(
     lesson_id: int, 
-    term: TermRequest, 
+    term: TermRequest,
     user: user_dependency, 
     db: db_dependency
 ):
@@ -92,12 +92,15 @@ def create_question_term(
     if not lesson:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lesson bulunamadı")
 
+    db_term = db.query(QuestionTerm).filter(term.term_title == QuestionTerm.term_title).first()
+    if db_term:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="QuestionTerm is already exist")
+
     question_term = QuestionTerm(
         term_title=term.term_title,
         q_lesson_id=lesson.id
     )
-    if question_term:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="QuestionTerm is already exist")
+
     db.add(question_term)
     db.commit()
     db.refresh(question_term)
@@ -108,19 +111,18 @@ def create_question_term(
         lesson_id=lesson.id
     )
 
-# ===== NOTE TERM OLUŞTURMA =====
 
 @router.post("/NoteTerm/create/{lesson_id}")
 def create_note_term(
-    lesson_id: int, 
-    term: TermRequest, 
-    user: user_dependency, 
-    db: db_dependency
+        lesson_id: int,
+        term: TermRequest,
+        user: user_dependency,
+        db: db_dependency
 ):
     """Note term oluşturur"""
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Giriş yapmanız gerekiyor")
-    
+
     db_user = db.query(User).filter(User.id == user.get("id")).first()
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Kullanıcı bulunamadı")
@@ -130,26 +132,31 @@ def create_note_term(
         NoteLesson.id == lesson_id,
         NoteLesson.user_id == db_user.id
     ).first()
-    
+
     if not lesson:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lesson bulunamadı")
+
+    existing_term = db.query(NoteTerm).filter(
+        NoteTerm.term_title == term.term_title,
+        NoteTerm.n_lesson_id == lesson_id
+    ).first()
+
+    if existing_term:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="NoteTerm is already exist")
 
     note_term = NoteTerm(
         term_title=term.term_title,
         n_lesson_id=lesson.id
     )
-    if note_term:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="NoteTerm is already exist")
     db.add(note_term)
     db.commit()
     db.refresh(note_term)
-    
+
     return TermResponse(
         id=note_term.id,
         term_title=note_term.term_title,
         lesson_id=lesson.id
     )
-
 # ===== QUESTION TERM GÜNCELLEME =====
 
 @router.put("/QuestionTerm/update/{term_id}")

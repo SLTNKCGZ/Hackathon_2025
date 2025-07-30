@@ -29,7 +29,7 @@ def get_question_lessons(user: user_dependency, db: db_dependency):
 
 
     return [
-        {"title":q_lesson.lesson_title,"id":q_lesson.id} for q_lesson in db_user.n_lessons
+        {"title":q_lesson.lesson_title,"id":q_lesson.id} for q_lesson in db_user.q_lessons
     ]
 
 
