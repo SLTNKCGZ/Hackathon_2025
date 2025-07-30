@@ -27,13 +27,9 @@ def get_question_lessons(user: user_dependency, db: db_dependency):
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
-    lessons = db.query(QuestionLesson).filter(QuestionLesson.user_id == db_user.id).order_by(QuestionLesson.id).all()
+
     return [
-        LessonResponse(
-            id=l.id,
-            user_id=db_user.id,
-            lesson_title=l.lesson_title
-        ) for l in lessons
+        {"title":q_lesson.lesson_title,"id":q_lesson.id} for q_lesson in db_user.n_lessons
     ]
 
 
@@ -46,7 +42,7 @@ def get_note_lessons(user: user_dependency, db: db_dependency):
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
-    return [n_lesson.lesson_title for n_lesson in db_user.n_lessons]
+    return [{"title":n_lesson.lesson_title,"id":n_lesson.id} for n_lesson in db_user.n_lessons]
 
 
 class LessonRequest(BaseModel):
