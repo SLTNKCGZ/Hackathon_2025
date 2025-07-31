@@ -5,11 +5,17 @@ import 'package:flutter/material.dart';
 class QuestionDetailPage extends StatefulWidget {
   final Map<String, dynamic> question;
   final String token;
+  final int lessonId;
+  final String termTitle;
+  final int termId;
 
   const QuestionDetailPage({
     Key? key,
     required this.question,
     required this.token,
+    required this.lessonId,
+    required this.termTitle,
+    required this.termId,
   }) : super(key: key);
 
   @override
@@ -42,7 +48,8 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     int? difficultyCategory,
     required String token,
   }) async {
-    final uri = Uri.parse('http://10.0.2.2:8000/questions/$questionId');
+    final uri = Uri.parse(
+        'http://10.0.2.2:8000/questions/$questionId/$difficultyCategory');
     var request = http.MultipartRequest('PUT', uri);
     request.headers['Authorization'] = 'Bearer $token';
 

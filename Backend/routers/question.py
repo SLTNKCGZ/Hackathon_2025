@@ -131,13 +131,13 @@ async def get_questions_by_term(
         ) for q in questions
     ]
 
-@router.put("/{question_id}")
+@router.put("/{question_id}/{difficulty_category}")
 async def update_question(
 user: user_dependency,
     db: db_dependency,
     question_id: int,
+difficulty_category: int,
     note: Optional[str] = Form(None, description="Yeni not"),
-    difficulty_category: Optional[int] = Form(None, description="Yeni kategori: 1=Kolay, 2=Orta, 3=Zor"),
 ):
 
     
