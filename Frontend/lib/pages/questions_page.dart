@@ -315,6 +315,40 @@ class _QuestionsPageState extends State<QuestionsPage>
 
   @override
   Widget build(BuildContext context) {
+    if(lessons.isEmpty){
+      return Scaffold(
+          appBar: AppBar(
+            title: Text("Sorular"),
+            titleTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 25),
+            backgroundColor: Colors.purple[600],
+            leading: Icon(Icons.quiz, size: 30, color: Colors.white),
+            actions: [
+              GestureDetector(
+                onTap: showAddLessonDialog,
+                child: Container(
+                  margin: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.purple[300],
+                    borderRadius: BorderRadius.circular(8)
+                  ),
+                  child: Row(
+                    children:[
+                      Text("Ders ekle",style: TextStyle(color:Colors.white)),
+                      Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ]
+                  ),
+                ),
+              ),
+            ],
+      ));
+    }
     return DefaultTabController(
         length: lessons.length,
         child: Scaffold(
@@ -330,20 +364,27 @@ class _QuestionsPageState extends State<QuestionsPage>
                 GestureDetector(
                   onTap: showAddLessonDialog,
                   child: Container(
-                    margin: EdgeInsets.all(8),
+                    margin: EdgeInsets.only(right:8),
+                    padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.transparent,
+                      color: Colors.purple[300],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: 30,
+                    child: Row(
+                        children:[
+                          Text("Ders ekle",style: TextStyle(color:Colors.white)),
+                          Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ]
                     ),
                   ),
                 ),
               ],
               bottom: TabBar(
+                isScrollable: true,
                 indicatorColor: Colors.white,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white70,
@@ -387,7 +428,16 @@ class _QuestionsPageState extends State<QuestionsPage>
                     color: Colors.purple[300],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.add, color: Colors.white, size: 20),
+                  child: Row(
+                      children:[
+                        Text("Konu ekle",style: TextStyle(color:Colors.white)),
+                        Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ]
+                  ),
                 ),
               ),
             ],
@@ -432,7 +482,16 @@ class _QuestionsPageState extends State<QuestionsPage>
                           color: Colors.purple[300],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(Icons.add, color: Colors.white, size: 20),
+                        child: Row(
+                            children:[
+                              Text("Soru ekle",style: TextStyle(color:Colors.white)),
+                              Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ]
+                        ),
                       ),
                     ),
                   ],
@@ -659,7 +718,7 @@ class _QuestionsPageState extends State<QuestionsPage>
                     3,
                     (index) => Icon(
                           index < stars ? Icons.star : Icons.star_border,
-                          color: isSelected ? Colors.white : Colors.orange,
+                          color: isSelected ? Colors.white : Colors.purpleAccent,
                           size: 20,
                         )),
               ),
