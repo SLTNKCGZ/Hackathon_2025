@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'QuestionDetailPage.dart';
 
 class QuestionsPage extends StatefulWidget {
   final String token;
@@ -13,6 +15,17 @@ class QuestionsPage extends StatefulWidget {
 
 class _QuestionsPageState extends State<QuestionsPage>
     with TickerProviderStateMixin {
+  final ImagePicker _picker = ImagePicker();
+
+  Future<File?> pickImage() async {
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
+
   List<Map<String, dynamic>> lessons = [];
   Map<int, List<Map<String, dynamic>>> terms = {};
   Map<int, Map<int, List<Map<String, dynamic>>>> questions =
@@ -195,64 +208,130 @@ class _QuestionsPageState extends State<QuestionsPage>
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text("$termTitle - Soru Ekle"),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Image picker
+        builder: (context, setDialogState) => Dialog(
+          insetPadding: EdgeInsets.all(16), // kenarlardan boşluk bırakır
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16,
+              right: 16,
+              top: 16,
+            ),
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                  maxWidth: MediaQuery.of(context).size.width * 0.9,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("$termTitle - Soru Ekle",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 16),
 
-                SizedBox(height: 16),
-                TextField(
-                  controller: questionController,
-                  decoration: InputDecoration(
-                    hintText: "Soru notu (opsiyonel)",
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
+                    // Image picker
+                    GestureDetector(
+                      onTap: () async {
+                        File? image = await pickImage();
+                        if (image != null) {
+                          setDialogState(() {
+                            selectedImage = image;
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.purple),
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.purple[50],
+                        ),
+                        child: selectedImage == null
+                            ? Center(
+                                child: Text(
+                                  "Fotoğraf seç\n(Butona tıkla)",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.purple),
+                                ),
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(
+                                  selectedImage!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: questionController,
+                      decoration: InputDecoration(
+                        hintText: "Soru notu (opsiyonel)",
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      "Zorluk Seviyesi: ${selectedStarRating == 1 ? 'Kolay' : selectedStarRating == 2 ? 'Orta' : 'Zor'}",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                          3,
+                          (index) => Icon(
+                                index < selectedStarRating
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.orange,
+                                size: 24,
+                              )),
+                    ),
+                    SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text("İptal"),
+                        ),
+                        SizedBox(width: 8),
+                        TextButton(
+                            onPressed: () async {
+                              if (selectedImage == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("Lütfen bir resim seçin")),
+                                );
+                                return;
+                              }
+                              if (lessons != null) {
+                                await createQuestion(lessonId, termId,
+                                    selectedImage!, questionController.text);
+                                Navigator.pop(context);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("Lütfen bir resim seçin")),
+                                );
+                              }
+                            },
+                            child: Text("Ekle"))
+                      ],
+                    ),
+                  ],
                 ),
-                SizedBox(height: 16),
-                Text(
-                  "Zorluk Seviyesi: ${selectedStarRating == 1 ? 'Kolay' : selectedStarRating == 2 ? 'Orta' : 'Zor'}",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                      3,
-                      (index) => Icon(
-                            index < selectedStarRating
-                                ? Icons.star
-                                : Icons.star_border,
-                            color: Colors.orange,
-                            size: 24,
-                          )),
-                ),
-              ],
+              ),
             ),
           ),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("İptal")),
-            TextButton(
-                onPressed: () async {
-                  if (lessons != null) {
-                    await createQuestion(lessonId, termId, selectedImage!,
-                        questionController.text);
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Lütfen bir resim seçin")),
-                    );
-                  }
-                },
-                child: Text("Ekle"))
-          ],
         ),
       ),
     );
@@ -315,38 +394,33 @@ class _QuestionsPageState extends State<QuestionsPage>
 
   @override
   Widget build(BuildContext context) {
-    if(lessons.isEmpty){
+    if (lessons.isEmpty) {
       return Scaffold(
           appBar: AppBar(
-            title: Text("Sorular"),
-            titleTextStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 25),
-            backgroundColor: Colors.purple[600],
-            leading: Icon(Icons.quiz, size: 30, color: Colors.white),
-            actions: [
-              GestureDetector(
-                onTap: showAddLessonDialog,
-                child: Container(
-                  margin: EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.purple[300],
-                    borderRadius: BorderRadius.circular(8)
-                  ),
-                  child: Row(
-                    children:[
-                      Text("Ders ekle",style: TextStyle(color:Colors.white)),
-                      Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ]
-                  ),
+        title: Text("Sorular"),
+        titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+        backgroundColor: Colors.purple[600],
+        leading: Icon(Icons.quiz, size: 30, color: Colors.white),
+        actions: [
+          GestureDetector(
+            onTap: showAddLessonDialog,
+            child: Container(
+              margin: EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                  color: Colors.purple[300],
+                  borderRadius: BorderRadius.circular(8)),
+              child: Row(children: [
+                Text("Ders ekle", style: TextStyle(color: Colors.white)),
+                Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 30,
                 ),
-              ),
-            ],
+              ]),
+            ),
+          ),
+        ],
       ));
     }
     return DefaultTabController(
@@ -364,22 +438,20 @@ class _QuestionsPageState extends State<QuestionsPage>
                 GestureDetector(
                   onTap: showAddLessonDialog,
                   child: Container(
-                    margin: EdgeInsets.only(right:8),
+                    margin: EdgeInsets.only(right: 8),
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.purple[300],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
-                        children:[
-                          Text("Ders ekle",style: TextStyle(color:Colors.white)),
-                          Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ]
-                    ),
+                    child: Row(children: [
+                      Text("Ders ekle", style: TextStyle(color: Colors.white)),
+                      Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ]),
                   ),
                 ),
               ],
@@ -428,16 +500,14 @@ class _QuestionsPageState extends State<QuestionsPage>
                     color: Colors.purple[300],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
-                      children:[
-                        Text("Konu ekle",style: TextStyle(color:Colors.white)),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ]
-                  ),
+                  child: Row(children: [
+                    Text("Konu ekle", style: TextStyle(color: Colors.white)),
+                    Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ]),
                 ),
               ),
             ],
@@ -482,16 +552,15 @@ class _QuestionsPageState extends State<QuestionsPage>
                           color: Colors.purple[300],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Row(
-                            children:[
-                              Text("Soru ekle",style: TextStyle(color:Colors.white)),
-                              Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ]
-                        ),
+                        child: Row(children: [
+                          Text("Soru ekle",
+                              style: TextStyle(color: Colors.white)),
+                          Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ]),
                       ),
                     ),
                   ],
@@ -545,126 +614,131 @@ class _QuestionsPageState extends State<QuestionsPage>
         difficultyColor = Colors.grey;
     }
 
-    return Container(
-      width: 220,
-      margin: EdgeInsets.only(right: 12),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Column(
-          children: [
-            // Question image
-            Container(
-              width: double.infinity,
-              height: 120,
-              decoration: BoxDecoration(
-                color: difficultyColor.withOpacity(0.1),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+    return GestureDetector(
+      onTap: () async {
+        final changed = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => QuestionDetailPage(
+              question: question,
+              token: widget.token,
+            ),
+          ),
+        );
+
+        if (changed == true) {
+          int lessonId = question['lesson_id'];
+          int termId = question['term_id'];
+          await fetchQuestions(lessonId, termId);
+          setState(() {});
+        }
+      },
+      child: Container(
+        width: 220,
+        margin: EdgeInsets.only(right: 12),
+        child: Card(
+          elevation: 4,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            children: [
+              // Question image
+              Container(
+                width: double.infinity,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: difficultyColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                  child: question['image_path'] != null
+                      ? Image.network(
+                          'http://10.0.2.2:8000${question['image_path']}',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey.shade200,
+                              child: Icon(Icons.image_not_supported,
+                                  color: Colors.grey),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: Colors.grey.shade200,
+                          child: Icon(Icons.image_not_supported,
+                              color: Colors.grey),
+                        ),
                 ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+
+              // Difficulty indicator
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: difficultyColor.withOpacity(0.1),
                 ),
-                child: question['image_path'] != null
-                    ? Image.network(
-                        'http://10.0.2.2:8000${question['image_path']}',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey.shade200,
-                            child: Icon(Icons.image_not_supported,
-                                color: Colors.grey),
-                          );
-                        },
-                      )
-                    : Container(
-                        color: Colors.grey.shade200,
-                        child:
-                            Icon(Icons.image_not_supported, color: Colors.grey),
-                      ),
-              ),
-            ),
-            // Difficulty indicator
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: difficultyColor.withOpacity(0.1),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Soru",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: difficultyColor,
-                    ),
-                  ),
-                  Row(
-                    children: List.generate(
-                        3,
-                        (index) => Icon(
-                              index < question['difficulty_category']
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              color: difficultyColor,
-                              size: 16,
-                            )),
-                  ),
-                ],
-              ),
-            ),
-            // Question note
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (question['note'] != null && question['note'].isNotEmpty)
-                      Text(
-                        question['note'],
-                        style: TextStyle(fontSize: 14),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    else
-                      Text(
-                        "Not yok",
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
-                        maxLines: 1,
+                    Text(
+                      "Soru",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: difficultyColor,
                       ),
-                    Spacer(),
+                    ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            // Düzenleme
-                          },
-                          icon: Icon(Icons.edit, size: 20),
-                          color: Colors.blue,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            // Silme
-                          },
-                          icon: Icon(Icons.delete, size: 20),
-                          color: Colors.red,
-                        ),
-                      ],
+                      children: List.generate(
+                          3,
+                          (index) => Icon(
+                                index < question['difficulty_category']
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: difficultyColor,
+                                size: 16,
+                              )),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+
+              // Question note
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (question['note'] != null &&
+                          question['note'].isNotEmpty)
+                        Text(
+                          question['note'],
+                          style: TextStyle(fontSize: 14),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      else
+                        Text(
+                          "Not yok",
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          maxLines: 1,
+                        ),
+                      Spacer(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -718,7 +792,8 @@ class _QuestionsPageState extends State<QuestionsPage>
                     3,
                     (index) => Icon(
                           index < stars ? Icons.star : Icons.star_border,
-                          color: isSelected ? Colors.white : Colors.purpleAccent,
+                          color:
+                              isSelected ? Colors.white : Colors.purpleAccent,
                           size: 20,
                         )),
               ),
