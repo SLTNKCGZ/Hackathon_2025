@@ -14,7 +14,7 @@ class SubjectsPage extends StatefulWidget {
 class _SubjectsPageState extends State<SubjectsPage>
     with TickerProviderStateMixin {
   List<Map<String, dynamic>> lessons = [];
-  TabController? _tabController;
+
 
   @override
   void initState() {
@@ -28,16 +28,14 @@ class _SubjectsPageState extends State<SubjectsPage>
       headers: {'Authorization': 'Bearer ${widget.token}'},
     );
     if (response.statusCode == 200) {
-      final decoded = json.decode(response.body);
       setState(() {
-        lessons = List<Map<String, dynamic>>.from(decoded);
-        _tabController = TabController(length: lessons.length, vsync: this);
+        lessons = List<Map<String, dynamic>>.from(
+            json.decode(response.body));
       });
     } else {
       setState(() {
         lessons = [];
-        _tabController = null;
-      });
+        });
     }
   }
 
@@ -86,42 +84,85 @@ class _SubjectsPageState extends State<SubjectsPage>
 
   @override
   Widget build(BuildContext context) {
-    if (_tabController == null || lessons.isEmpty) {
+    if(lessons.isEmpty){
       return Scaffold(
-        appBar: AppBar(
-          title: Text("Konular"),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.add),
-              tooltip: "Ders Ekle",
-              onPressed: showAddLessonDialog,
-            ),
-          ],
-        ),
-        body: const Center(child: Text("Hiç ders bulunamadı.")),
-      );
+          appBar: AppBar(
+            title: Text("Notlar"),
+            titleTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 25),
+            backgroundColor: Colors.purple[600],
+            leading: Icon(Icons.note, size: 30, color: Colors.white),
+            actions: [
+              GestureDetector(
+                onTap: showAddLessonDialog,
+                child: Container(
+                  margin: EdgeInsets.only(right:8),
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.purple[300],
+                      borderRadius: BorderRadius.circular(8)
+                  ),
+                  child: Row(
+                      children:[
+                        Text("Ders ekle",style: TextStyle(color:Colors.white,fontWeight: FontWeight.w500,fontSize: 15)),
+                        Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ]
+                  ),
+                ),
+              ),
+            ],
+          ));
     }
 
     return DefaultTabController(
       length: lessons.length,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Konular"),
+          title: Text("Notlar"),
+          titleTextStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 25),
+          backgroundColor: Colors.purple[600],
+          leading: Icon(Icons.note, size: 30, color: Colors.white),
           actions: [
-            IconButton(
-              icon: Icon(Icons.add),
-              tooltip: "Ders Ekle",
-              onPressed: showAddLessonDialog,
+            GestureDetector(
+              onTap: showAddLessonDialog,
+              child: Container(
+                margin: EdgeInsets.only(right:8),
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.purple[300],
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                child: Row(
+                    children:[
+                      Text("Ders ekle",style: TextStyle(color:Colors.white,fontWeight: FontWeight.w500,fontSize: 15)),
+                      Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ]
+                ),
+              ),
             ),
           ],
           bottom: TabBar(
-            controller: _tabController,
             isScrollable: true,
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
             tabs: lessons.map((lesson) => Tab(text: lesson['title'])).toList(),
           ),
         ),
         body: TabBarView(
-          controller: _tabController,
           children: lessons.map((lesson) {
             return TermListWidget(
               token: widget.token,
@@ -134,6 +175,8 @@ class _SubjectsPageState extends State<SubjectsPage>
     );
   }
 }
+
+
 
 class TermListWidget extends StatefulWidget {
   final String token;
@@ -199,6 +242,77 @@ class _TermListWidgetState extends State<TermListWidget> {
     }
   }
 
+  Future<void> deleteTerm(int termId) async {
+    final response = await http.delete(
+      Uri.parse('http://10.0.2.2:8000/term/NoteTerm/delete/$termId'),
+      headers: {
+        'Authorization': 'Bearer ${widget.token}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      await fetchTerms();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Konu başarıyla silindi')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Konu silinemedi')),
+      );
+    }
+  }
+
+  Future<void> updateTerm(int termId, String newTitle) async {
+    final response = await http.put(
+      Uri.parse('http://10.0.2.2:8000/term/NoteTerm/update/$termId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}',
+      },
+      body: jsonEncode({'term_title': newTitle}),
+    );
+
+    if (response.statusCode == 200) {
+      await fetchTerms();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Konu başarıyla güncellendi')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Konu güncellenemedi')),
+      );
+    }
+  }
+
+  void showUpdateTermDialog(int termId, String currentTitle) {
+    final TextEditingController updateController = TextEditingController(text: currentTitle);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Konu Güncelle'),
+        content: TextField(
+          controller: updateController,
+          decoration: const InputDecoration(hintText: 'Yeni konu başlığı'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (updateController.text.trim().isNotEmpty) {
+                await updateTerm(termId, updateController.text.trim());
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Güncelle'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void showAddTermDialog() {
     showDialog(
       context: context,
@@ -239,34 +353,92 @@ class _TermListWidgetState extends State<TermListWidget> {
                 itemCount: terms.length,
                 itemBuilder: (context, index) {
                   final term = terms[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotePage(
-                            token: widget.token,
-                            lessonId: widget.lessonId,
-                            termTitle: term['title'],
-                            termId: term['id'],
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.shade300,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NotePage(
+                                    token: widget.token,
+                                    lessonId: widget.lessonId,
+                                    termTitle: term['title'],
+                                    termId: term['id'],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Center(
+                              child: Text(
+                                term['title'],
+                                style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
-                      );
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Text(
-                          term['title'],
-                          style: TextStyle(fontSize: 16),
+                        PopupMenuButton<String>(
+                          icon: Icon(Icons.more_vert, color: Colors.white),
+                          onSelected: (value) async {
+                            if (value == 'edit') {
+                              showUpdateTermDialog(term['id'], term['title']);
+                            } else if (value == 'delete') {
+                              // Silme onayı al
+                              bool? confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Konu Sil'),
+                                  content: Text('Bu konuyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, false),
+                                      child: Text('İptal'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, true),
+                                      child: Text('Sil', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              
+                              if (confirm == true) {
+                                await deleteTerm(term['id']);
+                              }
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem<String>(
+                              value: 'edit',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.edit, color: Colors.blue),
+                                  SizedBox(width: 8),
+                                  Text('Düzenle', style: TextStyle(color: Colors.blue)),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem<String>(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.delete, color: Colors.red),
+                                  SizedBox(width: 8),
+                                  Text('Sil', style: TextStyle(color: Colors.red)),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                      ],
                     ),
                   );
                 },

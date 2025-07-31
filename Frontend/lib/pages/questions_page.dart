@@ -29,10 +29,7 @@ class _QuestionsPageState extends State<QuestionsPage>
     if (response.statusCode == 200) {
       setState(() {
         lessons = List<Map<String, dynamic>>.from(
-            json.decode(response.body).map((e) => {
-                  'title': e['title'],
-                  'id': e['id'],
-                }));
+            json.decode(response.body));
       });
       // Fetch terms for each lesson
       for (var lesson in lessons) {
@@ -329,7 +326,7 @@ class _QuestionsPageState extends State<QuestionsPage>
               GestureDetector(
                 onTap: showAddLessonDialog,
                 child: Container(
-                  margin: EdgeInsets.all(6),
+                  margin: EdgeInsets.only(right:8),
                   decoration: BoxDecoration(
                     color: Colors.purple[300],
                     borderRadius: BorderRadius.circular(8)

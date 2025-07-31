@@ -46,7 +46,7 @@ class NoteTerm(Base):
     term_title=Column(String)
     n_lesson_id = Column(Integer, ForeignKey('note_lessons.id'))
     n_lesson=relationship("NoteLesson",back_populates="n_terms")
-    notes=relationship("Note",back_populates="term")
+    notes=relationship("Note",back_populates="term",cascade="all, delete-orphan")
 
 class Question(Base):
     __tablename__ = 'questions'

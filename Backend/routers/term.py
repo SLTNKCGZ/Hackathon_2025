@@ -269,7 +269,7 @@ def delete_note_term(term_id: int, user: user_dependency, db: db_dependency):
     
     db.delete(term)
     db.commit()
-    return {"message": "Note term başarıyla silindi"}
+    return {"message": "Note term ve tüm notları başarıyla silindi"}
 
 
 
