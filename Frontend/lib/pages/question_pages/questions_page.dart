@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:hackathon_2025/pages/topic_detail_page.dart';
+import 'package:hackathon_2025/pages/question_pages/topic_detail_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'QuestionDetailPage.dart';
