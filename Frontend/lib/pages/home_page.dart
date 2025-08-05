@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hackathon_2025/models/quiz_models.dart';
 import 'package:hackathon_2025/pages/profile_page.dart';
 import 'package:hackathon_2025/pages/question_pages/questions_page.dart';
-import 'package:hackathon_2025/utils/utils.dart';
 import 'package:http/http.dart' as http;
 import 'note_pages/subjects_page.dart';
 import 'package:hackathon_2025/pages/quiz_page.dart';
@@ -288,7 +287,6 @@ class _QuizDialogState extends State<QuizDialog> {
     required int termId,
     required int difficulty,
     required int count,
-    required String token,
   }) async {
     final url = Uri.parse(
         'http://10.0.2.2:8000/api/createNoteQuiz/$lessonId/$termId/$difficulty/$count');
@@ -296,7 +294,7 @@ class _QuizDialogState extends State<QuizDialog> {
     final response = await http.get(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${widget.token}',
         'Content-Type': 'application/json',
       },
     );
@@ -315,7 +313,6 @@ class _QuizDialogState extends State<QuizDialog> {
     required int termId,
     required int difficulty,
     required int count,
-    required String token,
   }) async {
     final url = Uri.parse(
         'http://10.0.2.2:8000/api/createQuestionQuiz/$lessonId/$termId/$difficulty/$count');
@@ -323,7 +320,7 @@ class _QuizDialogState extends State<QuizDialog> {
     final response = await http.get(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${widget.token}',
         'Content-Type': 'application/json',
       },
     );
@@ -465,16 +462,7 @@ class _QuizDialogState extends State<QuizDialog> {
                 const SnackBar(
                     content: Text("Quiz yükleniyor, lütfen bekleyin...")),
               );
-
-              final token =
-                  await getToken(); // Burada kendi token alma fonksiyonunu çağır
-
-              if (token == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Kullanıcı token'ı bulunamadı")),
-                );
-                return;
-              }
+              
 
               try {
                 final quiz = selectedSource == "note"
@@ -483,15 +471,13 @@ class _QuizDialogState extends State<QuizDialog> {
                         termId: selectedTermId!,
                         difficulty: difficultyValue,
                         count: questionCount ?? 5,
-                        token: token,
                       )
                     : await fetchQuestionQuiz(
                         lessonId: selectedLessonId!,
                         termId: selectedTermId!,
                         difficulty: difficultyValue,
                         count: questionCount ?? 5,
-                        token: token,
-                      );
+                       );
 
                 print("Quiz çekildi. Soru sayısı: ${quiz.questions.length}");
 
