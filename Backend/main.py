@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 from database import Base, engine
-from routers import auth, lesson, question, term, note
+from routers import auth, lesson, question, term, note, api
 
 # Load environment variables
 load_dotenv()
@@ -37,5 +37,5 @@ app.include_router(lesson.router)
 app.include_router(question.router)
 app.include_router(term.router)
 app.include_router(note.router)
-
+app.include_router(api.router)
 Base.metadata.create_all(bind=engine)
