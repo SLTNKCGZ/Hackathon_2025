@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 import 'login_page.dart';
 
-
 class ProfilePage extends StatefulWidget {
   final String token;
 
@@ -16,7 +15,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   int? _editingIndex;
   String? get token => widget.token;
   late List<TextEditingController> _controllers;
@@ -76,7 +74,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-
   final List<String> _labels = [
     'Kullanıcı Adı',
     'Ad',
@@ -89,9 +86,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil'),
-        backgroundColor: Colors.blue[600],
-        titleTextStyle: const TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.bold),
-        leading: const Icon(Icons.account_circle,color: Colors.white,size: 25),
+        backgroundColor: Colors.purple[600],
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+        leading:
+            const Icon(Icons.account_circle, color: Colors.white, size: 25),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -100,28 +99,25 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const Center(
                 child: Stack(
-                  children: [
-                    Icon(Icons.account_circle,size: 120)
-                  ],
+                  children: [Icon(Icons.account_circle, size: 120)],
                 ),
               ),
               const SizedBox(height: 24),
-
               ...List.generate(_labels.length, (index) {
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListTile(
                     subtitle: _editingIndex == index
                         ? TextField(
-                      controller: _controllers[index],
-                      autofocus: true,
-                      onSubmitted: (_) async {
-                        setState(() {
-                          _editingIndex = null;
-                        });
-                        await _updateProfile(index);
-                      },
-                    )
+                            controller: _controllers[index],
+                            autofocus: true,
+                            onSubmitted: (_) async {
+                              setState(() {
+                                _editingIndex = null;
+                              });
+                              await _updateProfile(index);
+                            },
+                          )
                         : Text(_controllers[index].text),
                     title: Text(_labels[index]),
                     trailing: PopupMenuButton<String>(
@@ -145,22 +141,21 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () async {
-                  final response=await http.delete(
+                  final response = await http.delete(
                       Uri.parse('http://10.0.2.2:8000/auth/delete'),
                       headers: {
-                        'Authorization':'Bearer $token',
-                        'Content-type':'application/json'
-                      }
-                  );
-                  if(response.statusCode==200){
+                        'Authorization': 'Bearer $token',
+                        'Content-type': 'application/json'
+                      });
+                  if (response.statusCode == 200) {
                     if (!mounted) return;
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
-                          (route) => false,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                      (route) => false,
                     );
                   }
-
                 },
                 child: const Text('Hesabı sil'),
               ),
@@ -168,27 +163,23 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-
-
     );
   }
 
   Future<void> fetchProfileData() async {
-    final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/auth/me'),
+    final response = await http.get(Uri.parse('http://10.0.2.2:8000/auth/me'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-type': 'application/json'
-        }
-    );
-    if(response.statusCode==200){
-      final data=jsonDecode(response.body);
-      setState(() {
-        _controllers[0].text=data['username'];
-        _controllers[1].text=data['firstName'];
-        _controllers[2].text=data['lastName'];
-        _controllers[3].text=data['email'];
         });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        _controllers[0].text = data['username'];
+        _controllers[1].text = data['firstName'];
+        _controllers[2].text = data['lastName'];
+        _controllers[3].text = data['email'];
+      });
     }
   }
 }

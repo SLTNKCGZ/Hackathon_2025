@@ -1,11 +1,12 @@
 import 'package:hackathon_2025/pages/register_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key}) ;
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -81,7 +82,9 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                          icon: Icon(_obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility),
                           onPressed: () {
                             setState(() {
                               _obscurePassword = !_obscurePassword;
@@ -124,21 +127,31 @@ class _LoginPageState extends State<LoginPage> {
                             if (response.statusCode == 200) {
                               final data = jsonDecode(response.body);
                               final token = data['access_token'];
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString('token', token);
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => HomePage(token: token)),
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(token: token)),
                               );
                             } else {
                               // Giriş başarısız
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Kullanıcı adı veya şifre yanlış!')),
+                                SnackBar(
+                                    content: Text(
+                                        'Kullanıcı adı veya şifre yanlış!')),
                               );
                             }
                           }
                         },
                         child: const Text(
                           'Giriş Yap',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ),
                     ),
@@ -147,17 +160,18 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => PasswordResetPage()),
+                          MaterialPageRoute(
+                              builder: (context) => PasswordResetPage()),
                         );
                       },
                       child: const Text('Şifremi unuttum'),
                     ),
-
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => RegisterPage()),
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()),
                         );
                       },
                       child: const Text('Hesabınız yok mu? Kayıt olun'),
@@ -186,15 +200,21 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   bool _loading = false;
 
   Future<void> _sendResetCode() async {
-    setState(() { _loading = true; });
+    setState(() {
+      _loading = true;
+    });
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8000/auth/forgot-password-send-code'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': _emailController.text}),
     );
-    setState(() { _loading = false; });
+    setState(() {
+      _loading = false;
+    });
     if (response.statusCode == 200) {
-      setState(() { _codeSent = true; });
+      setState(() {
+        _codeSent = true;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Kod e-posta adresinize gönderildi.'),
@@ -212,7 +232,9 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   }
 
   Future<void> _verifyCodeAndGoToNewPassword() async {
-    setState(() { _loading = true; });
+    setState(() {
+      _loading = true;
+    });
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8000/auth/forgot-password-verify-code'),
       headers: {'Content-Type': 'application/json'},
@@ -221,7 +243,9 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
         'code': _codeController.text,
       }),
     );
-    setState(() { _loading = false; });
+    setState(() {
+      _loading = false;
+    });
     if (response.statusCode == 200) {
       Navigator.push(
         context,
@@ -282,7 +306,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                       child: Column(
                         children: [
                           CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.blueAccent),
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -314,9 +339,9 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          _codeSent 
-                            ? 'E-posta adresinize gönderilen 6 haneli kodu giriniz'
-                            : 'E-posta adresinizi giriniz, size şifre sıfırlama kodu göndereceğiz',
+                          _codeSent
+                              ? 'E-posta adresinize gönderilen 6 haneli kodu giriniz'
+                              : 'E-posta adresinizi giriniz, size şifre sıfırlama kodu göndereceğiz',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 16,
@@ -338,7 +363,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+                                borderSide: const BorderSide(
+                                    color: Colors.blueAccent, width: 2),
                               ),
                               filled: true,
                               fillColor: const Color(0xFFF8F9FA),
@@ -381,7 +407,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+                                borderSide: const BorderSide(
+                                    color: Colors.blueAccent, width: 2),
                               ),
                               filled: true,
                               fillColor: const Color(0xFFF8F9FA),
@@ -475,7 +502,9 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
       return;
     }
 
-    setState(() { _loading = true; });
+    setState(() {
+      _loading = true;
+    });
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8000/auth/forgot-password-verify'),
       headers: {'Content-Type': 'application/json'},
@@ -484,7 +513,9 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
         'new_password': _newPasswordController.text,
       }),
     );
-    setState(() { _loading = false; });
+    setState(() {
+      _loading = false;
+    });
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -543,7 +574,8 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                       child: Column(
                         children: [
                           CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.blueAccent),
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -592,7 +624,9 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                             hintText: 'En az 6 karakter',
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
-                              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                              icon: Icon(_obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
                               onPressed: () {
                                 setState(() {
                                   _obscurePassword = !_obscurePassword;
@@ -604,7 +638,8 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+                              borderSide: const BorderSide(
+                                  color: Colors.blueAccent, width: 2),
                             ),
                             filled: true,
                             fillColor: const Color(0xFFF8F9FA),
@@ -619,10 +654,13 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                             hintText: 'Şifrenizi tekrar girin',
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
-                              icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
+                              icon: Icon(_obscureConfirmPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
                               onPressed: () {
                                 setState(() {
-                                  _obscureConfirmPassword = !_obscureConfirmPassword;
+                                  _obscureConfirmPassword =
+                                      !_obscureConfirmPassword;
                                 });
                               },
                             ),
@@ -631,7 +669,8 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+                              borderSide: const BorderSide(
+                                  color: Colors.blueAccent, width: 2),
                             ),
                             filled: true,
                             fillColor: const Color(0xFFF8F9FA),

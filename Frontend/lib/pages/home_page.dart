@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hackathon_2025/models/quiz_models.dart';
 import 'package:hackathon_2025/pages/profile_page.dart';
 import 'package:hackathon_2025/pages/question_pages/questions_page.dart';
+import 'package:hackathon_2025/utils/utils.dart';
 
 import 'package:http/http.dart' as http;
 
 import 'note_pages/subjects_page.dart';
+import 'package:hackathon_2025/pages/quiz_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.token});
@@ -51,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Colors.purple[600],
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
@@ -180,6 +183,7 @@ class _QuizDialogState extends State<QuizDialog> {
   String? selectedDifficulty;
   int? selectedLessonId;
   int? selectedTermId;
+  String? selectedSource;
   List<Map<String, dynamic>> availableTerms = [];
   bool isLoadingTerms = false;
   int? questionCount;
@@ -197,7 +201,7 @@ class _QuizDialogState extends State<QuizDialog> {
   Future<void> fetchLessonsFromBothSources() async {
     final noteUrl = Uri.parse("http://10.0.2.2:8000/lesson/NoteLessons");
     final questionUrl =
-    Uri.parse("http://10.0.2.2:8000/lesson/QuestionLessons");
+        Uri.parse("http://10.0.2.2:8000/lesson/QuestionLessons");
 
     final headers = {
       'Authorization': 'Bearer ${widget.token}',
@@ -223,17 +227,17 @@ class _QuizDialogState extends State<QuizDialog> {
       // source içeren ve farklılaştırılmış başlıkla birlikte her dersi sakla
       final allLessons = [
         ...noteLessons.map((lesson) => {
-          "id": lesson["id"],
-          "title": lesson["title"],
-          "source": "note",
-          "displayTitle": "${lesson["title"]} (Not)"
-        }),
+              "id": lesson["id"],
+              "title": lesson["title"],
+              "source": "note",
+              "displayTitle": "${lesson["title"]} (Not)"
+            }),
         ...questionLessons.map((lesson) => {
-          "id": lesson["id"],
-          "title": lesson["title"],
-          "source": "question",
-          "displayTitle": "${lesson["title"]} (Soru)"
-        }),
+              "id": lesson["id"],
+              "title": lesson["title"],
+              "source": "question",
+              "displayTitle": "${lesson["title"]} (Soru)"
+            }),
       ];
 
       setState(() {
@@ -282,123 +286,238 @@ class _QuizDialogState extends State<QuizDialog> {
     }
   }
 
+  Future<QuizResponse> fetchNoteQuiz({
+    required int lessonId,
+    required int termId,
+    required int difficulty,
+    required int count,
+    required String token,
+  }) async {
+    final url = Uri.parse(
+        'http://10.0.2.2:8000/questions/createNoteQuiz/$lessonId/$termId/$difficulty/$count');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print('API cevabı: $data'); // Konsola basarak kontrol et
+      return QuizResponse.fromJson(data);
+    } else {
+      throw Exception('AI quiz yüklenemedi: ${response.statusCode}');
+    }
+  }
+
+  Future<QuizResponse> fetchQuestionQuiz({
+    required int lessonId,
+    required int termId,
+    required int difficulty,
+    required int count,
+    required String token,
+  }) async {
+    final url = Uri.parse(
+        'http://10.0.2.2:8000/questions/createQuestionQuiz/$lessonId/$termId/$difficulty/$count');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return QuizResponse.fromJson(data);
+    } else {
+      throw Exception(
+          'AI görsel sorulardan quiz yüklenemedi: ${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Quiz Ayarları"),
       content: isLoading
           ? const SizedBox(
-        height: 100,
-        child: Center(child: CircularProgressIndicator()),
-      )
+              height: 100,
+              child: Center(child: CircularProgressIndicator()),
+            )
           : Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(labelText: "Ders Seçin"),
-            value: selectedLessonTitle,
-            items: combinedLessons.map((lesson) {
-              return DropdownMenuItem<String>(
-                value: lesson["displayTitle"],
-                child: Text(lesson["displayTitle"]),
-              );
-            }).toList(),
-            onChanged: (value) {
-              final selected = combinedLessons
-                  .firstWhere((e) => e["displayTitle"] == value);
-              setState(() {
-                selectedLessonTitle = value;
-                selectedLessonId = selected["id"];
-                selectedTermId = null;
-                availableTerms = [];
-                isLoadingTerms = true;
-              });
-              fetchTermsForLesson(selected["id"], selected["source"]);
-            },
-          ),
-
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            decoration:
-            const InputDecoration(labelText: "Zorluk Seviyesi"),
-            value: selectedDifficulty,
-            items: difficultyLevels.map((level) {
-              return DropdownMenuItem(
-                value: level,
-                child: Text(level),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedDifficulty = value;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-
-          // KONULAR
-          isLoadingTerms
-              ? const CircularProgressIndicator()
-              : DropdownButtonFormField<int>(
-            decoration: const InputDecoration(
-                labelText: "Konu Seçin (Opsiyonel)"),
-            value: selectedTermId,
-            items: availableTerms.map((term) {
-              return DropdownMenuItem<int>(
-                value: term["id"],
-                child: Text(term["title"]),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedTermId = value;
-              });
-            },
-          ),
-          TextFormField(
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: "Soru Sayısı",
-              hintText: "Örn: 5",
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(labelText: "Ders Seçin"),
+                  value: selectedLessonTitle,
+                  items: combinedLessons.map((lesson) {
+                    return DropdownMenuItem<String>(
+                      value: lesson["displayTitle"],
+                      child: Text(lesson["displayTitle"]),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    final selected = combinedLessons
+                        .firstWhere((e) => e["displayTitle"] == value);
+                    setState(() {
+                      selectedLessonTitle = value;
+                      selectedLessonId = selected["id"];
+                      selectedSource = selected["source"];
+                      selectedTermId = null;
+                      availableTerms = [];
+                      isLoadingTerms = true;
+                    });
+                    fetchTermsForLesson(selected["id"], selected["source"]);
+                  },
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  decoration:
+                      const InputDecoration(labelText: "Zorluk Seviyesi"),
+                  value: selectedDifficulty,
+                  items: difficultyLevels.map((level) {
+                    return DropdownMenuItem(
+                      value: level,
+                      child: Text(level),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDifficulty = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                isLoadingTerms
+                    ? const CircularProgressIndicator()
+                    : DropdownButtonFormField<int>(
+                        decoration:
+                            const InputDecoration(labelText: "Konu Seçin"),
+                        value: selectedTermId,
+                        items: availableTerms.map((term) {
+                          return DropdownMenuItem<int>(
+                            value: term["id"],
+                            child: Text(term["title"]),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedTermId = value;
+                          });
+                        },
+                      ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "Soru Sayısı",
+                    hintText: "Örn: 5",
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      questionCount = int.tryParse(value);
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-            onChanged: (value) {
-              setState(() {
-                questionCount = int.tryParse(value);
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text("İptal"),
         ),
         ElevatedButton(
-          onPressed: () {
-            if (selectedLessonTitle != null && selectedDifficulty != null) {
-              Navigator.pop(context);
+          onPressed: () async {
+            if (selectedLessonId != null &&
+                selectedDifficulty != null &&
+                selectedTermId != null &&
+                selectedSource != null) {
+              // Dialog'u kapatmadan önce işlem yapacağız çünkü quiz çağrısı asenkron ve uzun sürebilir
+              print("Seçimler tamamlandı, quiz başlatılıyor");
 
-              // Burada AI isteği gönderilirken term seçilmediyse null gönderilecek
-              final selectedTermInfo = selectedTermId != null
-                  ? "Konu ID: $selectedTermId"
-                  : "Konu: Tümü";
+              // Zorluk seviyesini string'ten int'e çevir
+              int? difficultyValue;
+              switch (selectedDifficulty) {
+                case "Kolay":
+                  difficultyValue = 1;
+                  break;
+                case "Orta":
+                  difficultyValue = 2;
+                  break;
+                case "Zor":
+                  difficultyValue = 3;
+                  break;
+                default:
+                  difficultyValue = null;
+              }
+
+              if (difficultyValue == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text("Geçerli bir zorluk seviyesi seçin")),
+                );
+                return;
+              }
 
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    "Ders: $selectedLessonTitle\n"
-                        "Zorluk: $selectedDifficulty\n"
-                        "$selectedTermInfo\n"
-                        "(AI entegrasyonu yapılacak)",
-                  ),
-                ),
+                const SnackBar(
+                    content: Text("Quiz yükleniyor, lütfen bekleyin...")),
               );
 
-              // BURADA AI API'ye gönderme örneği:
-              // sendToAI(selectedLessonId, selectedDifficulty, selectedTermId);
-              // Eğer selectedTermId null ise backend tüm konuları kullanır
+              final token =
+                  await getToken(); // Burada kendi token alma fonksiyonunu çağır
+
+              if (token == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Kullanıcı token'ı bulunamadı")),
+                );
+                return;
+              }
+
+              try {
+                final quiz = selectedSource == "note"
+                    ? await fetchNoteQuiz(
+                        lessonId: selectedLessonId!,
+                        termId: selectedTermId!,
+                        difficulty: difficultyValue,
+                        count: questionCount ?? 5,
+                        token: token,
+                      )
+                    : await fetchQuestionQuiz(
+                        lessonId: selectedLessonId!,
+                        termId: selectedTermId!,
+                        difficulty: difficultyValue,
+                        count: questionCount ?? 5,
+                        token: token,
+                      );
+
+                print("Quiz çekildi. Soru sayısı: ${quiz.questions.length}");
+
+                Navigator.pop(
+                    context); // Dialog'u kapat (quiz yüklendikten sonra)
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => QuizPage(quiz: quiz),
+                  ),
+                );
+              } catch (e) {
+                print("Quiz yüklenirken hata: $e");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Quiz yüklenirken hata oluştu: $e")),
+                );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text("Lütfen ders, zorluk ve konu seçin")),
+              );
             }
           },
           child: const Text("Başla"),

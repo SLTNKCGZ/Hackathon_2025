@@ -31,7 +31,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    fetchTerms();
+    fetchNotes();
   }
 
   Future<void> fetchTerms() async {
@@ -66,12 +66,9 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
   }
 
   Future<void> fetchNotes() async {
-    if (terms.isEmpty) return;
-
-    int termId = terms[selectedTermIndex]['id'];
-
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/notes/${widget.lessonId}/$termId'),
+      Uri.parse(
+          'http://10.0.2.2:8000/notes/${widget.lessonId}/${widget.termId}'),
       headers: {'Authorization': 'Bearer ${widget.token}'},
     );
 
@@ -84,6 +81,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
       }
     } else {
       print('Notlar alınamadı: ${response.statusCode}');
+      print(response.body);
     }
   }
 
@@ -105,108 +103,101 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
     }
   }
 
-
-
-
-
   @override
   void dispose() {
-    _tabController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_tabController == null || terms.isEmpty) {
+    /*if (_tabController == null || terms.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Notlar')),
         body: const Center(child: CircularProgressIndicator()),
       );
-    }
-
+    }*/
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.termTitle}"),
-        titleTextStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 25),
-        backgroundColor: Colors.purple[600],
-        iconTheme:IconThemeData(size: 28,color: Colors.white)
-      ),
+          title: Text("${widget.termTitle}"),
+          titleTextStyle: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+          backgroundColor: Colors.purple[600],
+          iconTheme: IconThemeData(size: 28, color: Colors.white)),
       body: notes.isEmpty
           ? const Center(child: Text('Bu konuda henüz not eklenmemiş.'))
           : Container(
-              margin: EdgeInsets.only(top:8),
+              margin: EdgeInsets.only(top: 8),
               padding: EdgeInsets.all(8),
               child: ListView.builder(
-                  itemCount: notes.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 6.0, horizontal: 12.0),
-                      elevation: 2,
-                      child: ListTile(
-                        leading: const Icon(Icons.note_alt),
-                        title: Text(
-                          notes[index]['content'].length > 100 
+                itemCount: notes.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 6.0, horizontal: 12.0),
+                    elevation: 2,
+                    child: ListTile(
+                      leading: const Icon(Icons.note_alt),
+                      title: Text(
+                        notes[index]['content'].length > 100
                             ? '${notes[index]['content'].substring(0, 100)}...'
                             : notes[index]['content'],
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: notes[index]['content'].length > 100 
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: notes[index]['content'].length > 100
                           ? Text('Devamını görmek için tıklayın')
                           : null,
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.black),
-                          onPressed: () async {
-                            // Silme onayı al
-                            bool? confirm = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Not Sil'),
-                                content: const Text('Bu notu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context, false),
-                                    child: const Text('İptal'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context, true),
-                                    child: const Text('Sil', style: TextStyle(color: Colors.red)),
-                                  ),
-                                ],
-                              ),
-                            );
-                            
-                            if (confirm == true) {
-                              await deleteNote(notes[index]['id']);
-                            }
-                          },
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ViewNotePage(
-                                noteContent: notes[index]['content'],
-                                noteTitle: 'Not',
-                                token: widget.token,
-                                lessonId: widget.lessonId,
-                                termId: terms[selectedTermIndex]['id'],
-                                noteId: notes[index]['id'],
-                                onNoteUpdated: () => fetchNotes(),
-                              ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.black),
+                        onPressed: () async {
+                          // Silme onayı al
+                          bool? confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Not Sil'),
+                              content: const Text(
+                                  'Bu notu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text('İptal'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Sil',
+                                      style: TextStyle(color: Colors.red)),
+                                ),
+                              ],
                             ),
                           );
+
+                          if (confirm == true) {
+                            await deleteNote(notes[index]['id']);
+                          }
                         },
                       ),
-                    );
-                  },
-                ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ViewNotePage(
+                              noteContent: notes[index]['content'],
+                              noteTitle: 'Not',
+                              token: widget.token,
+                              lessonId: widget.lessonId,
+                              termId: widget.termId,
+                              noteId: notes[index]['id'],
+                              onNoteUpdated: () => fetchNotes(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -215,7 +206,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
               builder: (context) => AddNotePage(
                 token: widget.token,
                 lessonId: widget.lessonId,
-                termId: terms[selectedTermIndex]['id'],
+                termId: widget.termId,
                 onNoteAdded: () => fetchNotes(),
               ),
             ),
@@ -226,7 +217,4 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
       ),
     );
   }
-  
-  
-  
 }
