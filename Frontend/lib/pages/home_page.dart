@@ -6,6 +6,7 @@ import 'package:hackathon_2025/pages/question_pages/questions_page.dart';
 import 'package:http/http.dart' as http;
 import 'note_pages/subjects_page.dart';
 import 'package:hackathon_2025/pages/quiz_page.dart';
+import '../models/cultural_question.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.token});
@@ -86,11 +87,13 @@ class HomePageContent extends StatefulWidget {
 
 class _HomePageContentState extends State<HomePageContent> {
   String? firstName;
+  late Future<List<CulturalQuestion>> _culturalQuestions;
 
   @override
   void initState() {
     super.initState();
     fetch_name();
+    _culturalQuestions = fetchCulturalQuestions(widget.token);
   }
 
   Future<void> fetch_name() async {
@@ -107,6 +110,24 @@ class _HomePageContentState extends State<HomePageContent> {
     }
   }
 
+  Future<List<CulturalQuestion>> fetchCulturalQuestions(String token) async {
+    final url = Uri.parse("http://10.0.2.2:8000/api/getCulturalInformations");
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List<dynamic> questionsJson = data['questions'];
+      return questionsJson.map((q) => CulturalQuestion.fromJson(q)).toList();
+    } else {
+      throw Exception("Kültürel sorular alınamadı.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,43 +141,164 @@ class _HomePageContentState extends State<HomePageContent> {
         ),
         leading: const Icon(Icons.waving_hand, color: Colors.white, size: 25),
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: const EdgeInsets.only(
-              top: 40), // AppBar'a yakınlık buradan ayarlanır
-          child: InkWell(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => QuizDialog(token: widget.token),
-              );
-            },
-            child: Container(
-              width: 300,
-              height: 120,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Quiz butonu
+            InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => QuizDialog(token: widget.token),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.purple[300],
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Text(
+                    "Hadi Quiz Yapalım!",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            Container(
+              width: double.infinity,
+              height: 80,
+              margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: Colors.purple[300],
+                color: Colors.purple[200],
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: const Center(
                 child: Text(
-                  "Hadi Quiz Yapalım!",
+                  "Bunları Biliyor musunuz?",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ),
+
+            const SizedBox(height: 12),
+
+            // Kartlar
+            FutureBuilder<List<CulturalQuestion>>(
+              future: _culturalQuestions,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text("Hata: ${snapshot.error}"),
+                  );
+                } else {
+                  final questions = snapshot.data!;
+                  return Column(
+                    children: questions
+                        .map((q) => CulturalCard(question: q))
+                        .toList(),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CulturalCard extends StatefulWidget {
+  final CulturalQuestion question;
+  final double? width;
+
+  const CulturalCard({super.key, required this.question, this.width});
+
+  @override
+  State<CulturalCard> createState() => _CulturalCardState();
+}
+
+class _CulturalCardState extends State<CulturalCard> {
+  bool showAnswer = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: widget.width ??
+          double
+              .infinity, // genişlik ya dışarıdan gelir ya da maksimum genişlikte
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SingleChildScrollView(
+                physics:
+                    const NeverScrollableScrollPhysics(), // scroll kapalı, sadece içeriğe göre büyüsün
+                child: Text(
+                  widget.question.question,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (showAnswer)
+                Text(
+                  widget.question.answer,
+                  style: const TextStyle(color: Colors.purple, fontSize: 16),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              if (!showAnswer)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        showAnswer = true;
+                      });
+                    },
+                    child: const Text("Cevabı Göster"),
+                  ),
+                ),
+            ],
           ),
         ),
       ),
@@ -463,7 +605,6 @@ class _QuizDialogState extends State<QuizDialog> {
                     content: Text("Quiz yükleniyor, lütfen bekleyin...")),
               );
 
-
               try {
                 final quiz = selectedSource == "note"
                     ? await fetchNoteQuiz(
@@ -477,7 +618,7 @@ class _QuizDialogState extends State<QuizDialog> {
                         termId: selectedTermId!,
                         difficulty: difficultyValue,
                         count: questionCount ?? 5,
-                       );
+                      );
 
                 print("Quiz çekildi. Soru sayısı: ${quiz.questions.length}");
 
@@ -509,4 +650,3 @@ class _QuizDialogState extends State<QuizDialog> {
     );
   }
 }
-
