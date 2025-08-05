@@ -294,7 +294,7 @@ class _QuizDialogState extends State<QuizDialog> {
     required String token,
   }) async {
     final url = Uri.parse(
-        'http://10.0.2.2:8000/questions/createNoteQuiz/$lessonId/$termId/$difficulty/$count');
+        'http://10.0.2.2:8000/api/createNoteQuiz/$lessonId/$termId/$difficulty/$count');
 
     final response = await http.get(
       url,
@@ -321,7 +321,7 @@ class _QuizDialogState extends State<QuizDialog> {
     required String token,
   }) async {
     final url = Uri.parse(
-        'http://10.0.2.2:8000/questions/createQuestionQuiz/$lessonId/$termId/$difficulty/$count');
+        'http://10.0.2.2:8000/api/createQuestionQuiz/$lessonId/$termId/$difficulty/$count');
 
     final response = await http.get(
       url,
@@ -526,3 +526,4 @@ class _QuizDialogState extends State<QuizDialog> {
     );
   }
 }
+
