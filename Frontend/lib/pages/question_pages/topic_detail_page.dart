@@ -133,7 +133,15 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.termTitle)),
+      appBar: AppBar(
+        title: Text(widget.termTitle),
+        titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 25),
+        backgroundColor: Colors.purple[600],
+        iconTheme: IconThemeData(color: Colors.white,size:25),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddQuestionDialog,
         child: Icon(Icons.add_a_photo),
@@ -183,7 +191,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                               3,
                               (i) => Icon(
                                 i < star ? Icons.star : Icons.star_border,
-                                color: Colors.amber,
+                                color: Colors.purple,
                               ),
                             ),
                           ),
@@ -192,9 +200,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                             label,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: selectedDifficulty == star
-                                  ? Colors.purple
-                                  : Colors.black54,
+                              color:Colors.black54,
                             ),
                           )
                         ],
@@ -227,10 +233,11 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                               ),
                             ),
                           );
-                          if (changed == true) {
+                          setState(() async {
                             await fetchQuestionsByDifficulty(
                                 selectedDifficulty);
-                          }
+                          });
+
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(vertical: 8),

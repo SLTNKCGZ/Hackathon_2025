@@ -1,3 +1,5 @@
+import os
+import requests
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -323,3 +325,57 @@ def get_note_term_by_id(term_id: int, user: user_dependency, db: db_dependency):
         lesson_id=term.n_lesson_id
     )
 
+
+def createQuestions(terms_and_contents, difficult, time):
+    google_api_key = os.getenv("GOOGLE_API_KEY")
+    if not google_api_key:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="AI API key bulunamadı")
+
+    # AI prompt'u hazırla
+    prompt = f"""
+        
+        """
+
+    try:
+        # Google AI API'ye istek gönder
+        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": prompt
+                        }
+                    ]
+                }
+            ]
+        }
+
+        response = requests.post(
+            f"{url}?key={google_api_key}",
+            headers=headers,
+            json=data,
+            timeout=30
+        )
+
+        if response.status_code != 200:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="AI servisi ile iletişim kurulamadı"
+            )
+
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"AI servisi hatası: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Beklenmeyen hata: {str(e)}"
+        )

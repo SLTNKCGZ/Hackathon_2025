@@ -162,6 +162,12 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Soru Detayı"),
+        titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 25),
+        backgroundColor: Colors.purple[600],
+        iconTheme: IconThemeData(color: Colors.white,size: 25),
         actions: [
           if (!isEditing)
             IconButton(

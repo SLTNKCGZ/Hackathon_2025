@@ -1,10 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hackathon_2025/models/quiz_models.dart';
 import 'package:hackathon_2025/pages/profile_page.dart';
-import 'package:hackathon_2025/pages/questions_page.dart';
-import 'package:hackathon_2025/pages/subjects_page.dart';
+import 'package:hackathon_2025/pages/question_pages/questions_page.dart';
+import 'package:hackathon_2025/utils/utils.dart';
+
 import 'package:http/http.dart' as http;
+
+import 'note_pages/subjects_page.dart';
+import 'package:hackathon_2025/pages/quiz_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.token});
@@ -178,6 +183,7 @@ class _QuizDialogState extends State<QuizDialog> {
   String? selectedDifficulty;
   int? selectedLessonId;
   int? selectedTermId;
+  String? selectedSource;
   List<Map<String, dynamic>> availableTerms = [];
   bool isLoadingTerms = false;
   int? questionCount;
@@ -280,6 +286,60 @@ class _QuizDialogState extends State<QuizDialog> {
     }
   }
 
+  Future<QuizResponse> fetchNoteQuiz({
+    required int lessonId,
+    required int termId,
+    required int difficulty,
+    required int count,
+    required String token,
+  }) async {
+    final url = Uri.parse(
+        'http://10.0.2.2:8000/questions/createNoteQuiz/$lessonId/$termId/$difficulty/$count');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print('API cevabı: $data'); // Konsola basarak kontrol et
+      return QuizResponse.fromJson(data);
+    } else {
+      throw Exception('AI quiz yüklenemedi: ${response.statusCode}');
+    }
+  }
+
+  Future<QuizResponse> fetchQuestionQuiz({
+    required int lessonId,
+    required int termId,
+    required int difficulty,
+    required int count,
+    required String token,
+  }) async {
+    final url = Uri.parse(
+        'http://10.0.2.2:8000/questions/createQuestionQuiz/$lessonId/$termId/$difficulty/$count');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return QuizResponse.fromJson(data);
+    } else {
+      throw Exception(
+          'AI görsel sorulardan quiz yüklenemedi: ${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -307,6 +367,7 @@ class _QuizDialogState extends State<QuizDialog> {
                     setState(() {
                       selectedLessonTitle = value;
                       selectedLessonId = selected["id"];
+                      selectedSource = selected["source"];
                       selectedTermId = null;
                       availableTerms = [];
                       isLoadingTerms = true;
@@ -314,7 +375,6 @@ class _QuizDialogState extends State<QuizDialog> {
                     fetchTermsForLesson(selected["id"], selected["source"]);
                   },
                 ),
-
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   decoration:
@@ -333,13 +393,11 @@ class _QuizDialogState extends State<QuizDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
-
-                // KONULAR
                 isLoadingTerms
                     ? const CircularProgressIndicator()
                     : DropdownButtonFormField<int>(
-                        decoration: const InputDecoration(
-                            labelText: "Konu Seçin (Opsiyonel)"),
+                        decoration:
+                            const InputDecoration(labelText: "Konu Seçin"),
                         value: selectedTermId,
                         items: availableTerms.map((term) {
                           return DropdownMenuItem<int>(
@@ -374,29 +432,92 @@ class _QuizDialogState extends State<QuizDialog> {
           child: const Text("İptal"),
         ),
         ElevatedButton(
-          onPressed: () {
-            if (selectedLessonTitle != null && selectedDifficulty != null) {
-              Navigator.pop(context);
+          onPressed: () async {
+            if (selectedLessonId != null &&
+                selectedDifficulty != null &&
+                selectedTermId != null &&
+                selectedSource != null) {
+              // Dialog'u kapatmadan önce işlem yapacağız çünkü quiz çağrısı asenkron ve uzun sürebilir
+              print("Seçimler tamamlandı, quiz başlatılıyor");
 
-              // Burada AI isteği gönderilirken term seçilmediyse null gönderilecek
-              final selectedTermInfo = selectedTermId != null
-                  ? "Konu ID: $selectedTermId"
-                  : "Konu: Tümü";
+              // Zorluk seviyesini string'ten int'e çevir
+              int? difficultyValue;
+              switch (selectedDifficulty) {
+                case "Kolay":
+                  difficultyValue = 1;
+                  break;
+                case "Orta":
+                  difficultyValue = 2;
+                  break;
+                case "Zor":
+                  difficultyValue = 3;
+                  break;
+                default:
+                  difficultyValue = null;
+              }
+
+              if (difficultyValue == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text("Geçerli bir zorluk seviyesi seçin")),
+                );
+                return;
+              }
 
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    "Ders: $selectedLessonTitle\n"
-                    "Zorluk: $selectedDifficulty\n"
-                    "$selectedTermInfo\n"
-                    "(AI entegrasyonu yapılacak)",
-                  ),
-                ),
+                const SnackBar(
+                    content: Text("Quiz yükleniyor, lütfen bekleyin...")),
               );
 
-              // BURADA AI API'ye gönderme örneği:
-              // sendToAI(selectedLessonId, selectedDifficulty, selectedTermId);
-              // Eğer selectedTermId null ise backend tüm konuları kullanır
+              final token =
+                  await getToken(); // Burada kendi token alma fonksiyonunu çağır
+
+              if (token == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Kullanıcı token'ı bulunamadı")),
+                );
+                return;
+              }
+
+              try {
+                final quiz = selectedSource == "note"
+                    ? await fetchNoteQuiz(
+                        lessonId: selectedLessonId!,
+                        termId: selectedTermId!,
+                        difficulty: difficultyValue,
+                        count: questionCount ?? 5,
+                        token: token,
+                      )
+                    : await fetchQuestionQuiz(
+                        lessonId: selectedLessonId!,
+                        termId: selectedTermId!,
+                        difficulty: difficultyValue,
+                        count: questionCount ?? 5,
+                        token: token,
+                      );
+
+                print("Quiz çekildi. Soru sayısı: ${quiz.questions.length}");
+
+                Navigator.pop(
+                    context); // Dialog'u kapat (quiz yüklendikten sonra)
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => QuizPage(quiz: quiz),
+                  ),
+                );
+              } catch (e) {
+                print("Quiz yüklenirken hata: $e");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Quiz yüklenirken hata oluştu: $e")),
+                );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text("Lütfen ders, zorluk ve konu seçin")),
+              );
             }
           },
           child: const Text("Başla"),
