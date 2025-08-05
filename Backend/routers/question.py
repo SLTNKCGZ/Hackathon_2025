@@ -333,3 +333,5 @@ def delete_image_file(image_path: str):
             os.remove(file_path)
     except Exception as e:
         print(f"Fotoğraf silinemedi: {e}")
+
+
