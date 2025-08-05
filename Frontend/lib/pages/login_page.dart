@@ -1,6 +1,5 @@
 import 'package:hackathon_2025/pages/register_page.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -127,9 +126,6 @@ class _LoginPageState extends State<LoginPage> {
                             if (response.statusCode == 200) {
                               final data = jsonDecode(response.body);
                               final token = data['access_token'];
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setString('token', token);
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(

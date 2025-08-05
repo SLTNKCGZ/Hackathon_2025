@@ -462,7 +462,7 @@ class _QuizDialogState extends State<QuizDialog> {
                 const SnackBar(
                     content: Text("Quiz yükleniyor, lütfen bekleyin...")),
               );
-              
+
 
               try {
                 final quiz = selectedSource == "note"
