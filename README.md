@@ -52,11 +52,17 @@ Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları 
 
 ## Kullanılan Teknolojiler
 -Frontend : Flutter, Dart, HTTP, Json   
+
 -Backend : FastAPI, Python, SQLAlchemy, Pydantic, JWT, Alembic   
+
 -Veritabanı : PostgreSQL   
+
 -AI/ML Servisleri : Google AI API, Tesseract OCR   
+
 -Dosya İşleme : Pillow(PIL), UUID   
+
 -Mimari : RESTful API   
+
 -Güvenlik : JWT Authentication, Password Hashing, CORS   
 
 ## Product Backlog   
