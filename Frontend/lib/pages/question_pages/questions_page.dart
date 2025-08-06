@@ -91,7 +91,7 @@ class _QuestionsPageState extends State<QuestionsPage>
         titleTextStyle: TextStyle(
             fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        leading: Icon(Icons.note, size: 30),
+        leading: Icon(Icons.note, size: 30,color:Colors.white),
         actions: [
           GestureDetector(
             onTap: showAddLessonDialog,
