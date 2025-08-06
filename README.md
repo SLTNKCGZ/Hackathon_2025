@@ -1,12 +1,12 @@
-#Takım İsmi   
+# Takım İsmi   
 IceCore   
-#Takım Üyeleri   
+# Takım Üyeleri   
 Sultan Kocagöz   
 Şeyma Özek   
-#Ürün ile İlgili Bilgiler   
-##Ürün adı   
+# Ürün ile İlgili Bilgiler   
+## Ürün adı   
 AcademiWorld   
-##Ürün Açıklaması   
+## Ürün Açıklaması   
 Geliştirilen bu eğitim uygulaması, kullanıcıların zorlandıkları ya da saklamak istedikleri soruları sanal bir soru defteri olarak kaydetmelerine olanak tanır. Ayrıca, bu sorular zorluk seviyelerine göre sınıflandırılabilir.   
 
 Uygulama, bir sanal not defteri işlevi de görerek kullanıcıların notlarını ders ve konu bazında kategorize etmelerine imkân sağlar. Not ekleme ve düzenleme sürecinde, yapay zeka desteği sayesinde içerikler hem bilgi açısından hem de yazım yönünden otomatik olarak iyileştirilebilir.
@@ -14,7 +14,7 @@ Uygulama, bir sanal not defteri işlevi de görerek kullanıcıların notların�
 Bunlara ek olarak kullanıcılar; istedikleri dersin, belirli konularında, zorluk seviyesini ve soru sayısını kendilerinin belirlediği quizler oluşturabilirler.
 
 Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları sunarak bilgi dağarcığını genişletmeye yardımcı olur.
-##Ürün Özellikleri   
+## Ürün Özellikleri   
 -Ders ve konu bazlı kategorize edilebilen sanal soru defteri.
 
 -Soruları zorluk seviyelerine göre sınıflandırma.
@@ -31,7 +31,7 @@ Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları 
 
 -Not ve soru içeriklerinin düzenlenebilir ve güncellenebilir yapıda olması.sorular için zorluk seviyesinin güncellenmesi ile ilerleme gösterme.
 
-##Hedef Kitle   
+## Hedef Kitle   
 -Sınavlara hazırlık yapan öğrenciler (LGS, YKS vb.)
 
 -Ders notlarını düzenli tutmak isteyenler
@@ -48,10 +48,10 @@ Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları 
 
 -Ufuk açıcı sorularla kendini geliştirmek isteyen yetişkin kullanıcılar
 
-##Product Backlog   
+## Product Backlog   
 [Trello Backlog Board](https://trello.com/b/YE8wi78c/hackathon2025)
 
-##Ürün Görselleri   
+## Ürün Görselleri   
 <img src="Images/ps1.png" alt="ProductStatus" width="200"/>   
 <img src="Images/ps2.png" alt="ProductStatus" width="200"/>   
 <img src="Images/ps3.png" alt="ProductStatus" width="200"/>   
