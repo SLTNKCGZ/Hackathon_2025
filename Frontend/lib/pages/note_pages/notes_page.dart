@@ -93,7 +93,7 @@ class _NotesPageState extends State<NotesPage>
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
                 fontSize: 25),
-            backgroundColor: Colors.purple[600],
+            backgroundColor: Theme.of(context).colorScheme.primary,
             leading: Icon(Icons.note, size: 30, color: Colors.white),
             actions: [
               GestureDetector(
@@ -102,7 +102,7 @@ class _NotesPageState extends State<NotesPage>
                   margin: EdgeInsets.only(right:8),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                      color: Colors.purple[300],
+                      color: Theme.of(context).colorScheme.secondary,
                       borderRadius: BorderRadius.circular(8)
                   ),
                   child: Row(

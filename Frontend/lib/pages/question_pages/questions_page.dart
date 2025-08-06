@@ -99,7 +99,7 @@ class _QuestionsPageState extends State<QuestionsPage>
               margin: EdgeInsets.only(right: 8),
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                  color:Theme.of(context).colorScheme.tertiary,
+                  color:Theme.of(context).colorScheme.secondary,
                   borderRadius: BorderRadius.circular(8)),
               child: Row(children: [
                 Text("Ders ekle",
