@@ -359,8 +359,19 @@ def get_infos():
     if not api_key:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="AI API key bulunamadı")
 
-    prompt="""Genel kültür sorularından oluşan 4 ile 10 adet arasında açık uçlu soru istiyorum.Bu soruların konuları eşit dağılımlı olsun yani hepsi aynı konu hakkında olmasın.
-    Ayrıca kişinin ufkunu genişletecek sorulardan oluşsun.
+    prompt="""Genel kültür alanında, tarih, coğrafya, sanat, spor, bilim ve teknoloji, matematik, biyoloji
+    fizik, kimya, astronomi, arkeoloji, edebiyat, dünya kültürleri ve gelenekleri, keşifler ve coğrafi buluşlar, 
+    dünya siyaseti, ekonomi, dinler tarihi, popüler kültür, eğlence, sinema, film ve dizi kültürü gibi farklı konulardan oluşan 10 tane açık uçlu genel kültür sorusu üret.
+
+SORULARIN ÖZELLİKLERİ:
+1. Her soru sadece tek bir doğru cevaba sahip olmalı.
+2. Sorular kısa ve bilgi içerikli (hap bilgi) olmalı.
+3. Bazı sorular ilginç ya da az bilinen bilgiler içerebilir.
+4. Tüm sorular farklı kategorilerden gelmeli (her soru farklı bir alandan).
+5. Sorular kişisel yorum gerektirmemeli, tamamen bilgiye dayalı olmalı.
+6. Sorular farklı zorluk türlerinde olmalı (bazıları kolay, bazıları orta, bazıları zor).
+7. Sorular yenilendiğinde de olabildiğince farklı ve çeşitli koulardan gelmeli.
+
     Her soru için:
         - Soru metni 
         - Doğru cevap
@@ -377,7 +388,7 @@ def get_infos():
             "questions": [
             {{
                 "question": "Açık uçlu soru metni",
-                "answer": "Nedeni ile birlikte sorunun cevabının açıklanması",
+                "answer": "Cevap metni",
             }}
             ]
 
