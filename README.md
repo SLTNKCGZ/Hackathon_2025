@@ -69,7 +69,7 @@ Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları 
 <img src="Images/ps9.png" alt="PS" height="300"/> <img src="Images/ps10.png" alt="PS" height="300"/> <img src="Images/ps11.png" alt="PS" height="300"/>
 
 ## Ürün Videosu
-[AkademiWorld]()
+[AkademiWorld](https://youtube.com/shorts/Amoy0gs1gjk?si=qpzEP1gTRKq-cxtU)
 
 
 
