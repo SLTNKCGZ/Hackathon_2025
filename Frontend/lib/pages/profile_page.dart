@@ -86,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil'),
-        backgroundColor: Colors.purple[600],
+        backgroundColor: Theme.of(context).colorScheme.primary,
         titleTextStyle: const TextStyle(
             color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
         leading:
@@ -105,6 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 24),
               ...List.generate(_labels.length, (index) {
                 return Card(
+                  color: Theme.of(context).colorScheme.tertiary,
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListTile(
                     subtitle: _editingIndex == index

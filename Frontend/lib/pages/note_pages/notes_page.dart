@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'note_page.dart';
 
-class SubjectsPage extends StatefulWidget {
+class NotesPage extends StatefulWidget {
   final String token;
-  const SubjectsPage({Key? key, required this.token}) : super(key: key);
+  const NotesPage({Key? key, required this.token}) : super(key: key);
 
   @override
-  _SubjectsPageState createState() => _SubjectsPageState();
+  _NotesPageState createState() => _NotesPageState();
 }
 
-class _SubjectsPageState extends State<SubjectsPage>
+class _NotesPageState extends State<NotesPage>
     with TickerProviderStateMixin {
   List<Map<String, dynamic>> lessons = [];
 
@@ -58,6 +58,7 @@ class _SubjectsPageState extends State<SubjectsPage>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         title: Text("Ders Ekle"),
         content: TextField(
           controller: _lessonController,
@@ -127,9 +128,8 @@ class _SubjectsPageState extends State<SubjectsPage>
           title: Text("Notlar"),
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
               fontSize: 25),
-          backgroundColor: Colors.purple[600],
+          backgroundColor: Theme.of(context).colorScheme.primary,
           leading: Icon(Icons.note, size: 30, color: Colors.white),
           actions: [
             GestureDetector(
@@ -138,7 +138,7 @@ class _SubjectsPageState extends State<SubjectsPage>
                 margin: EdgeInsets.only(right:8),
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: Colors.purple[300],
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.circular(8)
                 ),
                 child: Row(
@@ -317,6 +317,7 @@ class _TermListWidgetState extends State<TermListWidget> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         title: Text("Konu Ekle"),
         content: TextField(
           controller: _termController,
@@ -357,7 +358,7 @@ class _TermListWidgetState extends State<TermListWidget> {
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.purple.shade300,
+                      color:Theme.of(context).colorScheme.secondary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -420,9 +421,9 @@ class _TermListWidgetState extends State<TermListWidget> {
                               value: 'edit',
                               child: Row(
                                 children: [
-                                  Icon(Icons.edit, color: Colors.blue),
+                                  Icon(Icons.edit, color: Colors.black),
                                   SizedBox(width: 8),
-                                  Text('Düzenle', style: TextStyle(color: Colors.blue)),
+                                  Text('Düzenle', style: TextStyle(color: Colors.black)),
                                 ],
                               ),
                             ),
@@ -430,9 +431,9 @@ class _TermListWidgetState extends State<TermListWidget> {
                               value: 'delete',
                               child: Row(
                                 children: [
-                                  Icon(Icons.delete, color: Colors.red),
+                                  Icon(Icons.delete, color: Colors.black),
                                   SizedBox(width: 8),
-                                  Text('Sil', style: TextStyle(color: Colors.red)),
+                                  Text('Sil', style: TextStyle(color: Colors.black)),
                                 ],
                               ),
                             ),

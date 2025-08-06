@@ -15,7 +15,13 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.light(
+          primary: Color(0xff5d1049),
+          onPrimary: Colors.white,
+          secondary: Color(0xff936081),
+          tertiary: Color(0xffede3e9),
+          surface: Color(0xffffffff),
+        ),
         useMaterial3: true,
       ),
       initialRoute: "/login",

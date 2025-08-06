@@ -121,7 +121,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
           title: Text("${widget.termTitle}"),
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
-          backgroundColor: Colors.purple[600],
+          backgroundColor: Theme.of(context).colorScheme.primary,
           iconTheme: IconThemeData(size: 28, color: Colors.white)),
       body: notes.isEmpty
           ? const Center(child: Text('Bu konuda henüz not eklenmemiş.'))

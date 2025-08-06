@@ -64,6 +64,13 @@ class _QuizPageState extends State<QuizPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Soru ${currentIndex + 1}/${widget.quiz.questions.length}'),
+        titleTextStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 25,
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: const IconThemeData(size: 28, color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

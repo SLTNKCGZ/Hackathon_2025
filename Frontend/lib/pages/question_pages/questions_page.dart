@@ -6,13 +6,13 @@ import 'QuestionDetailPage.dart';
 
 class QuestionsPage extends StatefulWidget {
   final String token;
-  const QuestionsPage({Key? key, required this.token}) : super(key: key);
+  const QuestionsPage({super.key, required this.token});
 
   @override
-  _SubjectsPageState createState() => _SubjectsPageState();
+  _QuestionsPageState createState() => _QuestionsPageState();
 }
 
-class _SubjectsPageState extends State<QuestionsPage>
+class _QuestionsPageState extends State<QuestionsPage>
     with TickerProviderStateMixin {
   List<Map<String, dynamic>> lessons = [];
 
@@ -57,6 +57,7 @@ class _SubjectsPageState extends State<QuestionsPage>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         title: Text("Ders Ekle"),
         content: TextField(
           controller: _lessonController,
@@ -86,11 +87,11 @@ class _SubjectsPageState extends State<QuestionsPage>
     if (lessons.isEmpty) {
       return Scaffold(
           appBar: AppBar(
-        title: Text("Notlar"),
+        title: Text("Sorular"),
         titleTextStyle: TextStyle(
             fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
-        backgroundColor: Colors.purple[600],
-        leading: Icon(Icons.note, size: 30, color: Colors.white),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: Icon(Icons.note, size: 30),
         actions: [
           GestureDetector(
             onTap: showAddLessonDialog,
@@ -98,7 +99,7 @@ class _SubjectsPageState extends State<QuestionsPage>
               margin: EdgeInsets.only(right: 8),
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                  color: Colors.purple[300],
+                  color:Theme.of(context).colorScheme.tertiary,
                   borderRadius: BorderRadius.circular(8)),
               child: Row(children: [
                 Text("Ders ekle",
@@ -125,7 +126,7 @@ class _SubjectsPageState extends State<QuestionsPage>
           title: Text("Sorular"),
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
-          backgroundColor: Colors.purple[600],
+          backgroundColor: Theme.of(context).colorScheme.primary,
           leading: Icon(Icons.note, size: 30, color: Colors.white),
           actions: [
             GestureDetector(
@@ -134,7 +135,7 @@ class _SubjectsPageState extends State<QuestionsPage>
                 margin: EdgeInsets.only(right: 8),
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: Colors.purple[300],
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.circular(8)),
                 child: Row(children: [
                   Text("Ders ekle",
@@ -306,6 +307,7 @@ class _TermListState extends State<TermList> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         title: Text("Konu Ekle"),
         content: TextField(
           controller: _termController,
@@ -343,7 +345,7 @@ class _TermListState extends State<TermList> {
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.purple.shade300,
+                      color: Theme.of(context).colorScheme.secondary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -412,10 +414,10 @@ class _TermListState extends State<TermList> {
                               value: 'edit',
                               child: Row(
                                 children: [
-                                  Icon(Icons.edit, color: Colors.blue),
+                                  Icon(Icons.edit, color: Colors.black),
                                   SizedBox(width: 8),
                                   Text('Düzenle',
-                                      style: TextStyle(color: Colors.blue)),
+                                      style: TextStyle(color: Colors.black)),
                                 ],
                               ),
                             ),
@@ -423,10 +425,10 @@ class _TermListState extends State<TermList> {
                               value: 'delete',
                               child: Row(
                                 children: [
-                                  Icon(Icons.delete, color: Colors.red),
+                                  Icon(Icons.delete, color: Colors.black),
                                   SizedBox(width: 8),
                                   Text('Sil',
-                                      style: TextStyle(color: Colors.red)),
+                                      style: TextStyle(color: Colors.black)),
                                 ],
                               ),
                             ),

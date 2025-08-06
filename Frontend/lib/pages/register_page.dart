@@ -47,12 +47,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       'Kayıt Ol',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -194,7 +194,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Theme.of(context).colorScheme.primary,
                           elevation: 4,
                         ),
                         onPressed: () async {
@@ -239,7 +239,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           MaterialPageRoute(builder: (context) => LoginPage()),
                         );
                       },
-                      child: const Text('Zaten hesabınız var mı? Giriş yap'),
+                      child:Text('Zaten hesabınız var mı? Giriş yap',style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                     ),
                   ],
                 ),

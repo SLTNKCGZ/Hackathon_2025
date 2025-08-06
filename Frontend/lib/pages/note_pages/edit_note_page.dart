@@ -145,7 +145,7 @@ class _EditNotePageState extends State<EditNotePage> {
           color: Colors.white,
           fontSize: 25,
         ),
-        backgroundColor: Colors.purple[600],
+        backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(size: 28, color: Colors.white),
       ),
       body: Column(

@@ -43,12 +43,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       'Giriş Yap',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Theme.of(context).colorScheme.primary,
                           elevation: 4,
                         ),
                         onPressed: () async {
@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                               builder: (context) => PasswordResetPage()),
                         );
                       },
-                      child: const Text('Şifremi unuttum'),
+                      child: Text('Şifremi unuttum',style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                     ),
                     TextButton(
                       onPressed: () {
@@ -170,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                               builder: (context) => RegisterPage()),
                         );
                       },
-                      child: const Text('Hesabınız yok mu? Kayıt olun'),
+                      child:Text('Hesabınız yok mu? Kayıt olun',style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                     ),
                   ],
                 ),
@@ -219,9 +219,9 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('E-posta gönderilemedi.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       );
     }
@@ -254,9 +254,9 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Kod hatalı veya süresi dolmuş.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       );
     }
@@ -275,7 +275,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white, size: 24),
         centerTitle: true,
@@ -298,12 +298,12 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                 ],
               ),
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: Column(
                         children: [
                           CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.blueAccent),
+                                Theme.of(context).colorScheme.primary),
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -322,15 +322,15 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         Icon(
                           _codeSent ? Icons.verified_user : Icons.lock_reset,
                           size: 64,
-                          color: Colors.blueAccent,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(height: 24),
                         Text(
                           _codeSent ? 'Doğrulama Kodu' : 'Şifre Sıfırlama',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
+                            color:Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -359,8 +359,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                    color: Colors.blueAccent, width: 2),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.secondary, width: 2),
                               ),
                               filled: true,
                               fillColor: const Color(0xFFF8F9FA),
@@ -372,7 +372,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                             height: 56,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
+                                backgroundColor:Theme.of(context).colorScheme.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -403,8 +403,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                    color: Colors.blueAccent, width: 2),
+                                borderSide: BorderSide(
+                                    color:Theme.of(context).colorScheme.secondary, width: 2),
                               ),
                               filled: true,
                               fillColor: const Color(0xFFF8F9FA),
@@ -417,7 +417,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                             height: 56,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
+                                backgroundColor: Theme.of(context).colorScheme.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -442,10 +442,10 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                                 _codeController.clear();
                               });
                             },
-                            child: const Text(
+                            child: Text(
                               'Farklı e-posta kullan',
                               style: TextStyle(
-                                color: Colors.blueAccent,
+                                color: Theme.of(context).colorScheme.secondary,
                                 fontSize: 16,
                               ),
                             ),
@@ -490,9 +490,9 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
 
     if (_newPasswordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Şifre en az 6 karakter olmalıdır!'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       );
       return;
@@ -522,9 +522,9 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
       Navigator.popUntil(context, (route) => route.isFirst);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Şifre değiştirme başarısız.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       );
     }
@@ -533,7 +533,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text(
           'Yeni Şifre Belirle',
@@ -543,7 +543,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white, size: 24),
         centerTitle: true,
@@ -566,12 +566,12 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                 ],
               ),
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: Column(
                         children: [
                           CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.blueAccent),
+                                Theme.of(context).colorScheme.primary),
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -587,18 +587,18 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                   : Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.lock_outline,
                           size: 64,
-                          color: Colors.blueAccent,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(height: 24),
-                        const Text(
+                        Text(
                           'Yeni Şifre Belirle',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -634,8 +634,8 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(
-                                  color: Colors.blueAccent, width: 2),
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.secondary, width: 2),
                             ),
                             filled: true,
                             fillColor: const Color(0xFFF8F9FA),
@@ -665,8 +665,8 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(
-                                  color: Colors.blueAccent, width: 2),
+                              borderSide:BorderSide(
+                                  color: Theme.of(context).colorScheme.secondary, width: 2),
                             ),
                             filled: true,
                             fillColor: const Color(0xFFF8F9FA),
@@ -678,7 +678,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                           height: 56,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent,
+                              backgroundColor: Theme.of(context).colorScheme.primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),

@@ -4,7 +4,7 @@ import 'package:hackathon_2025/models/quiz_models.dart';
 import 'package:hackathon_2025/pages/profile_page.dart';
 import 'package:hackathon_2025/pages/question_pages/questions_page.dart';
 import 'package:http/http.dart' as http;
-import 'note_pages/subjects_page.dart';
+import 'note_pages/notes_page.dart';
 import 'package:hackathon_2025/pages/quiz_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     _pages = [
       HomePageContent(token: widget.token),
-      SubjectsPage(token: widget.token),
+      NotesPage(token: widget.token),
       QuestionsPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _pages = [
       HomePageContent(token: widget.token),
-      SubjectsPage(token: widget.token),
+      NotesPage(token: widget.token),
       QuestionsPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];
@@ -48,10 +48,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.purple[600],
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Theme.of(context).colorScheme.surface,
+        unselectedItemColor: Theme.of(context).colorScheme.tertiary,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -112,7 +113,7 @@ class _HomePageContentState extends State<HomePageContent> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Merhaba $firstName"),
-        backgroundColor: Colors.purple[600],
+        backgroundColor: Theme.of(context).colorScheme.primary,
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 25,

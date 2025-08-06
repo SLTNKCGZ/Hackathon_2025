@@ -139,7 +139,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 25),
-        backgroundColor: Colors.purple[600],
+        backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: IconThemeData(color: Colors.white,size:25),
       ),
       floatingActionButton: FloatingActionButton(
