@@ -93,8 +93,8 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   void initState() {
     super.initState();
-    fetch_name();
     _culturalQuestions = fetchCulturalQuestions(widget.token);
+    fetch_name();
   }
 
   Future<void> fetch_name() async {
@@ -158,11 +158,11 @@ class _HomePageContentState extends State<HomePageContent> {
                 width: double.infinity,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Colors.purple[300],
+                  color:Theme.of(context).colorScheme.tertiary,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black,
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -172,7 +172,6 @@ class _HomePageContentState extends State<HomePageContent> {
                   child: Text(
                     "Hadi Quiz Yapalım!",
                     style: TextStyle(
-                      color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -188,11 +187,11 @@ class _HomePageContentState extends State<HomePageContent> {
               height: 80,
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: Colors.purple[200],
+                color: Theme.of(context).colorScheme.tertiary,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -202,7 +201,6 @@ class _HomePageContentState extends State<HomePageContent> {
                 child: Text(
                   "Bunları Biliyor musunuz?",
                   style: TextStyle(
-                    color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
@@ -225,6 +223,11 @@ class _HomePageContentState extends State<HomePageContent> {
                   return Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: Text("Hata: ${snapshot.error}"),
+                  );
+                } else if (snapshot.data == null) {
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Center(child: Text("Veri bulunamadı")),
                   );
                 } else {
                   final questions = snapshot.data!;
@@ -260,9 +263,8 @@ class _CulturalCardState extends State<CulturalCard> {
   Widget build(BuildContext context) {
     return Container(
       width: widget.width ??
-          double
-              .infinity, // genişlik ya dışarıdan gelir ya da maksimum genişlikte
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -273,7 +275,7 @@ class _CulturalCardState extends State<CulturalCard> {
             children: [
               SingleChildScrollView(
                 physics:
-                    const NeverScrollableScrollPhysics(), // scroll kapalı, sadece içeriğe göre büyüsün
+                    const NeverScrollableScrollPhysics(),
                 child: Text(
                   widget.question.question,
                   style: const TextStyle(fontSize: 16),
@@ -283,7 +285,7 @@ class _CulturalCardState extends State<CulturalCard> {
               if (showAnswer)
                 Text(
                   widget.question.answer,
-                  style: const TextStyle(color: Colors.purple, fontSize: 16),
+                  style: TextStyle(color: Colors.purple[600], fontSize: 16),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),

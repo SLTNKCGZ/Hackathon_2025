@@ -173,10 +173,10 @@ class _EditNotePageState extends State<EditNotePage> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _isLoading ? null : editNote,
-                    icon: const Icon(Icons.edit),
-                    label: const Text('Düzelt'),
+                    icon: const Icon(Icons.edit,color: Colors.black,),
+                    label: const Text('Düzelt',style: TextStyle(color:Colors.black),),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink,
+                      backgroundColor: Theme.of(context).colorScheme.tertiary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
@@ -198,7 +198,7 @@ class _EditNotePageState extends State<EditNotePage> {
                       : const Icon(Icons.save),
                     label: Text(_isLoading ? 'Güncelleniyor...' : 'Güncelle'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purpleAccent,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),

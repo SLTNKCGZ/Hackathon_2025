@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
           onPrimary: Colors.white,
           secondary: Color(0xff936081),
           tertiary: Color(0xffede3e9),
+          onTertiary: Colors.black,
           surface: Color(0xffffffff),
         ),
         useMaterial3: true,

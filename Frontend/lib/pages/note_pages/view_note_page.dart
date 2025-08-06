@@ -113,14 +113,14 @@ class _ViewNotePageState extends State<ViewNotePage> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.note_alt, color: Colors.purple[600]),
+                          Icon(Icons.note_alt, color: Theme.of(context).colorScheme.secondary),
                           const SizedBox(width: 8),
                           Text(
                             'Not İçeriği',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.purple[600],
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
                         ],

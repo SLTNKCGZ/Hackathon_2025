@@ -358,7 +358,7 @@ class _TermListWidgetState extends State<TermListWidget> {
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color:Theme.of(context).colorScheme.secondary,
+                      color:Theme.of(context).colorScheme.tertiary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -381,13 +381,13 @@ class _TermListWidgetState extends State<TermListWidget> {
                             child: Center(
                               child: Text(
                                 term['title'],
-                                style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
                         ),
                         PopupMenuButton<String>(
-                          icon: Icon(Icons.more_vert, color: Colors.white),
+                          icon: Icon(Icons.more_vert, color: Colors.black),
                           onSelected: (value) async {
                             if (value == 'edit') {
                               showUpdateTermDialog(term['id'], term['title']);

@@ -250,7 +250,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                           index < (question['difficulty_category'] ?? 1)
                               ? Icons.star
                               : Icons.star_border,
-                          color: Colors.orange,
+                          color: Theme.of(context).colorScheme.primary,
                           size: 30,
                         );
                       }),
@@ -281,7 +281,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                             starNum <= _selectedDifficulty
                                 ? Icons.star
                                 : Icons.star_border,
-                            color: Colors.orange,
+                            color: Theme.of(context).colorScheme.primary,
                             size: 32,
                           ),
                           onPressed: () {

@@ -172,13 +172,13 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                           EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
                         color: selectedDifficulty == star
-                            ? Colors.purple.shade100
+                            ? Theme.of(context).colorScheme.tertiary
                             : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(
                             12), // <-- Daire değil, yumuşak köşe
                         border: Border.all(
                           color: selectedDifficulty == star
-                              ? Colors.purple
+                              ? Theme.of(context).colorScheme.secondary
                               : Colors.grey.shade400,
                           width: 1.5,
                         ),
@@ -191,7 +191,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                               3,
                               (i) => Icon(
                                 i < star ? Icons.star : Icons.star_border,
-                                color: Colors.purple,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ),
@@ -243,7 +243,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                           margin: EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            color: Colors.purple.shade100,
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
