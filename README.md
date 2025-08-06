@@ -51,30 +51,30 @@ Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları 
 -Ufuk açıcı sorularla kendini geliştirmek isteyen yetişkin kullanıcılar
 
 ## Kullanılan Teknolojiler
--Frontend : Flutter, Dart, HTTP, Json
--Backend : FastAPI, Python, SQLAlchemy, Pydantic, JWT, Alembic
--Veritabanı : PostgreSQL
--AI/ML Servisleri : Google AI API, Tesseract OCR
--Dosya İşleme : Pillow(PIL), UUID
--Mimari : RESTful API
--Güvenlik : JWT Authentication, Password Hashing, CORS
+-Frontend : Flutter, Dart, HTTP, Json   
+-Backend : FastAPI, Python, SQLAlchemy, Pydantic, JWT, Alembic   
+-Veritabanı : PostgreSQL   
+-AI/ML Servisleri : Google AI API, Tesseract OCR   
+-Dosya İşleme : Pillow(PIL), UUID   
+-Mimari : RESTful API   
+-Güvenlik : JWT Authentication, Password Hashing, CORS   
 
 ## Product Backlog   
 [Trello Backlog Board](https://trello.com/b/YE8wi78c/hackathon2025)
 
 ## Ürün Görselleri 
 
-<img src="Images/ps1.png" alt="PS" width="200"/>
-<img src="Images/ps2.png" alt="PS" width="200"/>
-<img src="Images/ps3.png" alt="PS" width="200"/>
-<img src="Images/ps4.png" alt="PS" width="200"/>   
-<img src="Images/ps5.png" alt="PS" width="200"/>
-<img src="Images/ps6.png" alt="PS" width="200"/>
-<img src="Images/ps7.png" alt="PS" width="200"/>
-<img src="Images/ps8.png" alt="PS" width="200"/>   
-<img src="Images/ps9.png" alt="PS" width="200"/>
-<img src="Images/ps10.png" alt="PS" width="200"/>
-<img src="Images/ps11.png" alt="PS" width="200"/>
+<img src="Images/ps1.png" alt="PS"/>
+<img src="Images/ps2.png" alt="PS"/>
+<img src="Images/ps3.png" alt="PS"/>
+<img src="Images/ps4.png" alt="PS"/>   
+<img src="Images/ps5.png" alt="PS"/>
+<img src="Images/ps6.png" alt="PS"/>
+<img src="Images/ps7.png" alt="PS"/>
+<img src="Images/ps8.png" alt="PS"/>   
+<img src="Images/ps9.png" alt="PS"/>
+<img src="Images/ps10.png" alt="PS"/>
+<img src="Images/ps11.png" alt="PS"/>
 
 
 
