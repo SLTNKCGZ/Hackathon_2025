@@ -64,17 +64,12 @@ Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları 
 
 ## Ürün Görselleri 
 
-<img src="Images/ps1.png" alt="PS" height="300"/>
-<img src="Images/ps2.png" alt="PS" height="300"/>
-<img src="Images/ps3.png" alt="PS" height="300"/>
-<img src="Images/ps4.png" alt="PS" height="300"/>   
-<img src="Images/ps5.png" alt="PS" height="300"/>
-<img src="Images/ps6.png" alt="PS" height="300"/>
-<img src="Images/ps7.png" alt="PS" height="300"/>
-<img src="Images/ps8.png" alt="PS" height="300"/>   
-<img src="Images/ps9.png" alt="PS" height="300"/>
-<img src="Images/ps10.png" alt="PS" height="300"/>
-<img src="Images/ps11.png" alt="PS" height="300"/>
+<img src="Images/ps1.png" alt="PS" height="300"/> <img src="Images/ps2.png" alt="PS" height="300"/> <img src="Images/ps3.png" alt="PS" height="300"/> <img src="Images/ps4.png" alt="PS" height="300"/>   
+<img src="Images/ps5.png" alt="PS" height="300"/> <img src="Images/ps6.png" alt="PS" height="300"/> <img src="Images/ps7.png" alt="PS" height="300"/> <img src="Images/ps8.png" alt="PS" height="300"/>   
+<img src="Images/ps9.png" alt="PS" height="300"/> <img src="Images/ps10.png" alt="PS" height="300"/> <img src="Images/ps11.png" alt="PS" height="300"/>
+
+## Ürün Videosu
+[AkademiWorld]()
 
 
 
