@@ -52,17 +52,17 @@ Ayrıca, uygulama her gün kullanıcıya ufuk açıcı genel kültür soruları 
 [Trello Backlog Board](https://trello.com/b/YE8wi78c/hackathon2025)
 
 ## Ürün Görselleri   
-<img src="Images/ps1.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps2.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps3.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps4.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps5.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps6.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps7.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps8.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps9.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps10.png" alt="ProductStatus" width="200"/>   
-<img src="Images/ps11.png" alt="ProductStatus" width="200"/>   
+<img src="Images/ps1.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps2.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps3.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps4.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps5.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps6.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps7.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps8.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps9.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps10.png" alt="ProductStatus" width="200"/>
+<img src="Images/ps11.png" alt="ProductStatus" width="200"/>
 
 
 
